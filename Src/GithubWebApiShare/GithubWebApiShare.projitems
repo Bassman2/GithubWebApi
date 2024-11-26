@@ -10,6 +10,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\GithubService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CreatePullModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PatchPullModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PullModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\SourceGenerationContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\UserModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)User.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
   </ItemGroup>
 </Project>
