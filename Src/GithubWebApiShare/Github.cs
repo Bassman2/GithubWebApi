@@ -90,6 +90,50 @@ public sealed class Github : IDisposable
 
     #endregion
 
+    #region Repositories
+
+    public async Task<IEnumerable<Repository>?> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetOrganizationRepositoriesAsync(org, cancellationToken);
+        return res?.Select(i => new Repository(i));
+    }
+
+    public async Task<IEnumerable<Repository>?> GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetAuthenticatedUserRepositoriesAsync(cancellationToken);
+        return res?.Select(i => new Repository(i));
+    }
+
+    public async Task<IEnumerable<Repository>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetUserRepositoriesAsync(user, cancellationToken);
+        return res?.Select(i => new Repository(i));
+    }
+
+    public async Task<IEnumerable<Repository>?> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetPublicRepositoriesAsync(since, cancellationToken);
+        return res?.Select(i => new Repository(i));
+    }
+
+    public async Task<Repository?> GetRepositoryAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
+        return res is not null ? new Repository(res) : null;
+    }
+
+    #endregion
+
     #region User
 
     public async Task<User?> GetAuthenticatedUserAsync(CancellationToken cancellationToken = default)

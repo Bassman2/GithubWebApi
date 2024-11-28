@@ -5,6 +5,8 @@
     {
         private static string? host;
         private static string? apiKey;
+        private static string testUser = "Bassman2";
+        private static string testRepo = "ApiTest";
 
 
 

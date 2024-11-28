@@ -3,7 +3,7 @@
 public partial class GithubTest
 {
     [TestMethod]
-    public async Task TestMethodAuthenticatedUserAsync()
+    public async Task TestMethodGetAuthenticatedUserAsync()
     {
         using var github = new Github(apiKey!);
 
@@ -26,7 +26,7 @@ public partial class GithubTest
     }
 
     [TestMethod]
-    public async Task TestMethodUserNameAsync()
+    public async Task TestMethodGetUserNameAsync()
     {
         using var github = new Github(apiKey!);
 
@@ -47,7 +47,7 @@ public partial class GithubTest
     }
 
     [TestMethod]
-    public async Task TestMethodUserIdAsync()
+    public async Task TestMethodGetUserIdAsync()
     {
         using var github = new Github(apiKey!);
 
