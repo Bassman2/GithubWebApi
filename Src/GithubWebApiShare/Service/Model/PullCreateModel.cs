@@ -1,7 +1,6 @@
 ﻿namespace GithubWebApi.Service.Model;
 
-internal class PatchPullModel
-
+internal class PullCreateModel
 {
     [JsonPropertyName("title")]
     public string? Title { get; set; }
@@ -9,11 +8,13 @@ internal class PatchPullModel
     [JsonPropertyName("body")]
     public string? Body { get; set; }
 
-    [JsonPropertyName("state")]
-    public string? State { get; set; }
+    [JsonPropertyName("head")]
+    public string? Head { get; set; }
 
     [JsonPropertyName("base")]
     public string? Base { get; set; }
 }
 
-// {"title":"new title","body":"updated body","state":"open","base":"master"}'
+
+
+// {"title":"Amazing new feature","body":"Please pull these awesome changes in!","head":"octocat:new-feature","base":"master"}'

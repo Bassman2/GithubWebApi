@@ -1,7 +1,6 @@
 ﻿namespace GithubWebApi.Service.Model;
 
-internal class PatchPullModel
-
+internal class PullPatchModel
 {
     [JsonPropertyName("title")]
     public string? Title { get; set; }

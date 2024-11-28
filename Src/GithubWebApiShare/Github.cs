@@ -100,5 +100,20 @@ public sealed class Github : IDisposable
         return res is not null ? new User(res) : null;
     }
 
+    public async Task<User?> GetUserAsync(string username, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetUserAsync(username, cancellationToken);
+        return res is not null ? new User(res) : null;
+    }
+
+    public async Task<User?> GetUserAsync(long id, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetUserAsync(id, cancellationToken);
+        return res is not null ? new User(res) : null;
+    }
     #endregion
 }

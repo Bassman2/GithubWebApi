@@ -1,4 +1,6 @@
-﻿namespace GithubWebApi.Service;
+﻿using System.Threading;
+
+namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
@@ -25,6 +27,130 @@ internal class GithubService : JsonService
     //}
 
     #endregion
+
+    #region Branches
+
+    public async Task<IEnumerable<BranchModel>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/branches", cancellationToken);
+        return res;
+    }
+
+    public async Task<BranchModel?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/branches/{branch}", cancellationToken);
+        return res;
+    }
+
+    #endregion
+
+    #region Codespaces
+
+    public async Task<IEnumerable<BranchModel>?> GetCodespacesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/codespaces", cancellationToken);
+        return res;
+    }
+
+    #endregion
+    
+    #region PullRequest
+
+    public async Task<IEnumerable<PullModel>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<PullModel>>($"/repos/{owner}/{repo}/pulls", cancellationToken);
+        return res;
+    }
+
+    public async Task<PullModel?> CreatePullAsync(string owner, string repo, string title, string body, string head, string baseBranch, CancellationToken cancellationToken)
+    {
+        var req = new PullCreateModel() { Title = title, Body = body, Head = head, Base = baseBranch };
+        var res = await PostAsJsonAsync<PullCreateModel, PullModel>($"/repos/{owner}/{repo}/pulls", req, cancellationToken);
+        return res;
+    }
+
+    public async Task<PullModel?> GetPullAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", cancellationToken);
+        return res;
+    }
+
+    public async Task<PullModel?> UpdatePullAsync(string owner, string repo, int pullNumber, string title, string body, string state, string baseBranch, CancellationToken cancellationToken)
+    {
+        var req = new PullPatchModel() { Title = title, Body = body, State = state, Base = baseBranch };
+        var res = await PatchAsJsonAsync<PullPatchModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
+        return res;
+    }
+
+    //public async Task<PullModel?> UpdatePullBranchAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
+    //{
+    //    var req = new PullPatchModel() { };
+    //    var res = await PatchAsJsonAsync<PullPatchModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
+    //    return res;
+    //}
+
+    #endregion
+
+    #region Repositories
+
+    public async Task<IEnumerable<RepositoryModel>?> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/orgs/{org}/repos", cancellationToken);
+        return res;
+    }  
+
+    public async Task<IEnumerable<RepositoryModel>?> GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/user/repos", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<RepositoryModel>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/users/{user}/repos", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<RepositoryModel>?> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/repositories?since={since}", cancellationToken);
+        return res;
+    }
+
+    public async Task<RepositoryModel?> GetRepositoryAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<RepositoryModel>($"/repos/{owner}/{repo}", cancellationToken);
+        return res;
+    }
+
+    #endregion
+
+    #region User
+
+    public async Task<UserModel?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<UserModel>("/user", cancellationToken);
+        return res;
+    }
+
+    public async Task<UserModel?> GetUserAsync(string username, CancellationToken cancellationToken)
+    { 
+        ArgumentException.ThrowIfNullOrWhiteSpace(username, nameof(username));
+
+        var res = await GetFromJsonAsync<UserModel>($"/users/{username}", cancellationToken);
+        return res;
+    }
+
+    public async Task<UserModel?> GetUserAsync(long id, CancellationToken cancellationToken)
+    {
+
+        var res = await GetFromJsonAsync<UserModel>($"/user/{id}", cancellationToken);
+        return res;
+    }
+
+    #endregion
+
+
 
     public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken)
     {
@@ -79,65 +205,4 @@ internal class GithubService : JsonService
 
     */
 
-    #region Branches
-
-    public async Task<IEnumerable<BranchModel>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken)
-    {
-        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/branches", cancellationToken);
-        return res;
-    }
-
-    public async Task<BranchModel?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken)
-    {
-        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/branches/{branch}", cancellationToken);
-        return res;
-    }
-
-    #endregion
-
-    #region PullRequest
-
-    public async Task<IEnumerable<PullModel>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)
-    {
-        var res = await GetFromJsonAsync<IEnumerable<PullModel>>($"/repos/{owner}/{repo}/pulls", cancellationToken);
-        return res;
-    }
-
-    public async Task<PullModel?> CreatePullAsync(string owner, string repo, string title, string body, string head, string baseBranch, CancellationToken cancellationToken)
-    {
-        var req = new CreatePullModel() { Title = title, Body = body, Head = head, Base = baseBranch };
-        var res = await PostAsJsonAsync<CreatePullModel, PullModel>($"/repos/{owner}/{repo}/pulls", req, cancellationToken);
-        return res;
-    }
-
-    public async Task<PullModel?> GetPullAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
-    {
-        var res = await GetFromJsonAsync<PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", cancellationToken);
-        return res;
-    }
-
-    public async Task<PullModel?> UpdatePullAsync(string owner, string repo, int pullNumber, string title, string body, string state, string baseBranch, CancellationToken cancellationToken)
-    {
-        var req = new PatchPullModel() { Title = title, Body = body, State = state, Base = baseBranch };
-        var res = await PatchAsJsonAsync<PatchPullModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
-        return res;
-    }
-
-    //public async Task<PullModel?> UpdatePullBranchAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
-    //{
-    //    var req = new PatchPullModel() { };
-    //    var res = await PatchAsJsonAsync<PatchPullModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
-    //    return res;
-    //}
-
-    #endregion
-    #region User
-        
-    public async Task<UserModel?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
-    {
-        var res = await GetFromJsonAsync<UserModel>("/user", cancellationToken);
-        return res;
-    }
-
-    #endregion
 }

@@ -2,11 +2,19 @@
 
 [JsonSourceGenerationOptions]
 
+[JsonSerializable(typeof(BranchModel))]
+
+[JsonSerializable(typeof(CommitModel))]
+
+// Pull
+[JsonSerializable(typeof(PullCreateModel))]
 [JsonSerializable(typeof(PullModel))]
 [JsonSerializable(typeof(IEnumerable<PullModel>))]
 [JsonSerializable(typeof(List<PullModel>))]
-[JsonSerializable(typeof(CreatePullModel))]
-[JsonSerializable(typeof(PatchPullModel))]
+[JsonSerializable(typeof(PullPatchModel))]
+[JsonSerializable(typeof(RepositoryModel))]
+
+
 
 [JsonSerializable(typeof(UserModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext
