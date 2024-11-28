@@ -4,8 +4,17 @@
 
 internal class GithubService : JsonService
 {
-    public GithubService(Uri host, string apiKey) : base(host, SourceGenerationContext.Default, new BearerAuthenticator(apiKey))
+    private const string defHost = "https://api.github.com";
+
+    public GithubService(string apiKey, string appName) : this(new Uri(defHost), apiKey, appName)
     { }
+
+    public GithubService(Uri host, string apiKey, string appName) : base(host, SourceGenerationContext.Default, new BearerAuthenticator(apiKey))
+    {
+        client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+        client!.DefaultRequestHeaders.Add("User-Agent", appName);
+    }
 
     #region error handling
 
@@ -54,11 +63,10 @@ internal class GithubService : JsonService
 
     #endregion
     #region User
-
-    
+        
     public async Task<UserModel?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<UserModel>($"/user", cancellationToken);
+        var res = await GetFromJsonAsync<UserModel>("/user", cancellationToken);
         return res;
     }
 

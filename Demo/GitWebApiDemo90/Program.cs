@@ -1,6 +1,6 @@
 ﻿using GithubWebApi;
 
-namespace GithubWebApiDemo90;
+namespace GitWebApiDemo90;
 
 internal class Program
 {
@@ -10,6 +10,7 @@ internal class Program
 
         new Program().Test();
     }
+
     public void Test()
     {
         Task.Run(async () => { await TestAsync(); }).Wait();
@@ -20,11 +21,10 @@ internal class Program
     {
         try
         {
-            string? host = Environment.GetEnvironmentVariable("GITHUB_HOST");
-            string? apiKey = Environment.GetEnvironmentVariable("GITHUB_APIKEY");
+            string? host = Environment.GetEnvironmentVariable("GIT_HOST");
+            string? apiKey = Environment.GetEnvironmentVariable("GIT_APIKEY");
 
-
-            using var github = new Github(apiKey!, "GithubWebApiDemo");
+            using var github = new Github(new Uri(host!), apiKey!, "GitWebApiDemo");
 
             var user = await github.GetAuthenticatedUserAsync();
 
@@ -32,6 +32,5 @@ internal class Program
         }
         catch (Exception ex)
         { }
-
     }
 }

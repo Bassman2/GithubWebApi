@@ -1,8 +1,20 @@
 ﻿namespace GithubWebApi;
 
-public sealed class Github(Uri host, string apiKey) : IDisposable
+public sealed class Github : IDisposable
 {
-    private GithubService? service = new(host, apiKey);
+    private const string defAppName = "GithubWebApi";
+
+    private GithubService? service;
+
+    public Github(string apiKey, string appName = defAppName)
+    {
+        service = new GithubService(apiKey, appName);
+    }
+
+    public Github(Uri host, string apiKey, string appName = defAppName)
+    {
+        service = new GithubService(host, apiKey, appName);
+    }
 
     public void Dispose()
     {
@@ -16,7 +28,7 @@ public sealed class Github(Uri host, string apiKey) : IDisposable
 
     #region Pull Request
 
-    public async Task<IEnumerable<PullRequest>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PullRequest>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -24,7 +36,7 @@ public sealed class Github(Uri host, string apiKey) : IDisposable
         return res?.Select(p => new PullRequest(p)).ToList();
     }
 
-    public async Task<PullRequest?> CreatePullAsync(string owner, string repo, string title, string body, string head, string baseBranch, CancellationToken cancellationToken)
+    public async Task<PullRequest?> CreatePullAsync(string owner, string repo, string title, string body, string head, string baseBranch, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -32,7 +44,7 @@ public sealed class Github(Uri host, string apiKey) : IDisposable
         return res is not null ? new PullRequest(res) : null;
     }
 
-    public async Task<PullRequest?> GetPullAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
+    public async Task<PullRequest?> GetPullAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -40,7 +52,7 @@ public sealed class Github(Uri host, string apiKey) : IDisposable
         return res is not null ? new PullRequest(res) : null; 
     }
 
-    public async Task<PullRequest?> UpdatePullAsync(string owner, string repo, int pullNumber, string title, string body, string state, string baseBranch, CancellationToken cancellationToken)
+    public async Task<PullRequest?> UpdatePullAsync(string owner, string repo, int pullNumber, string title, string body, string state, string baseBranch, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -52,7 +64,7 @@ public sealed class Github(Uri host, string apiKey) : IDisposable
 
     #region User
 
-    public async Task<User?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
+    public async Task<User?> GetAuthenticatedUserAsync(CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
