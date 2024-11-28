@@ -26,6 +26,75 @@ internal class GithubService : JsonService
 
     #endregion
 
+    public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+        return res;
+    }
+
+    /*
+
+    [
+  {
+    "ref": "refs/heads/AED2-8320_display_username_after_signin",
+    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItODMyMF9kaXNwbGF5X3VzZXJuYW1lX2FmdGVyX3NpZ25pbg==",
+    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-8320_display_username_after_signin",
+    "object": {
+      "sha": "d480f41ab6c419d01e581ff71076db7aa330d332",
+      "type": "commit",
+      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/d480f41ab6c419d01e581ff71076db7aa330d332"
+    }
+  },
+  {
+    "ref": "refs/heads/AED2-11937_POC_thinking_4.2",
+    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItMTE5MzdfUE9DX3RoaW5raW5nXzQuMg==",
+    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-11937_POC_thinking_4.2",
+    "object": {
+      "sha": "873f1a48b123c06a0e112a1141e6c7245ef023dd",
+      "type": "commit",
+      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/873f1a48b123c06a0e112a1141e6c7245ef023dd"
+    }
+  },
+  {
+    "ref": "refs/heads/AED2-16547_VC_state_on_service_start",
+    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItMTY1NDdfVkNfc3RhdGVfb25fc2VydmljZV9zdGFydA==",
+    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-16547_VC_state_on_service_start",
+    "object": {
+      "sha": "f7f599bce018a05a5eeadec1d2b4ab1c9241e2f1",
+      "type": "commit",
+      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/f7f599bce018a05a5eeadec1d2b4ab1c9241e2f1"
+    }
+  },
+  {
+    "ref": "refs/heads/asterix2-4.2",
+    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL2FzdGVyaXgyLTQuMg==",
+    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/asterix2-4.2",
+    "object": {
+      "sha": "77707bfb4dc9f59d1cdaa8960fc568be3117850c",
+      "type": "commit",
+      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/77707bfb4dc9f59d1cdaa8960fc568be3117850c"
+    }
+  },
+
+
+    */
+
+    #region Branches
+
+    public async Task<IEnumerable<BranchModel>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/branches", cancellationToken);
+        return res;
+    }
+
+    public async Task<BranchModel?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/branches/{branch}", cancellationToken);
+        return res;
+    }
+
+    #endregion
+
     #region PullRequest
 
     public async Task<IEnumerable<PullModel>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)

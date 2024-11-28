@@ -9,9 +9,12 @@
     <Import_RootNamespace>GithubWebApi</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Branch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\GithubService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\BranchModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CommitModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CreatePullModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PatchPullModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PullModel.cs" />

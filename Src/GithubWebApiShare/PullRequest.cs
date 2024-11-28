@@ -10,6 +10,5 @@ public class PullRequest
 
     public string? Url { get; }
 
-    [JsonPropertyName("folder")]
     public int? Id { get; }
 }

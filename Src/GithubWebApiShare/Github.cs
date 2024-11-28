@@ -26,6 +26,34 @@ public sealed class Github : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetHeadRevisionAsync(owner, repo, cancellationToken);
+        return res; //?.Select(p => new PullRequest(p)).ToList();
+    }
+
+    #region Branches
+
+    public async Task<IEnumerable<Branch>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetBranchesAsync(owner, repo, cancellationToken);
+        return res?.Select(i => new Branch(i)).ToList();
+    }
+
+    public async Task<Branch?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetBranchAsync(owner, repo, branch, cancellationToken);
+        return res is not null ? new Branch(res) : null;
+    }
+
+    #endregion
+
     #region Pull Request
 
     public async Task<IEnumerable<PullRequest>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken = default)
