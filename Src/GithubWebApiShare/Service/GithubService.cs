@@ -42,6 +42,13 @@ internal class GithubService : JsonService
         return res;
     }
 
+    public async Task<BranchModel?> RenameBranchAsync(string owner, string repo, string branch, string newName, CancellationToken cancellationToken)
+    {
+        var req = new BranchRenameModel() { NewName = newName };
+        var res = await PostAsJsonAsync<BranchRenameModel, BranchModel>($"/repos/{owner}/{repo}/branches/{branch}/rename", req, cancellationToken);
+        return res;
+    }
+
     #endregion
 
     #region Codespaces

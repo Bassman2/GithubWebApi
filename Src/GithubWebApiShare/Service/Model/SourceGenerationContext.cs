@@ -3,6 +3,8 @@
 [JsonSourceGenerationOptions]
 
 [JsonSerializable(typeof(BranchModel))]
+[JsonSerializable(typeof(ProtectionModel))]
+[JsonSerializable(typeof(RequiredStatusChecksModel))]
 
 [JsonSerializable(typeof(CommitModel))]
 

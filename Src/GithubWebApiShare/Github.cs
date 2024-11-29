@@ -26,13 +26,13 @@ public sealed class Github : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken = default)
-    {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetHeadRevisionAsync(owner, repo, cancellationToken);
-        return res; //?.Select(p => new PullRequest(p)).ToList();
-    }
+    //    var res = await service.GetHeadRevisionAsync(owner, repo, cancellationToken);
+    //    return res; //?.Select(p => new PullRequest(p)).ToList();
+    //}
 
     #region Branches
 
@@ -49,6 +49,14 @@ public sealed class Github : IDisposable
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
         var res = await service.GetBranchAsync(owner, repo, branch, cancellationToken);
+        return res is not null ? new Branch(res) : null;
+    }
+
+    public async Task<Branch?> RenameBranchAsync(string owner, string repo, string branch, string newName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+                
+        var res = await service.RenameBranchAsync(owner, repo, branch, newName, cancellationToken);
         return res is not null ? new Branch(res) : null;
     }
 

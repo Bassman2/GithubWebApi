@@ -1,6 +1,6 @@
 ﻿namespace GithubWebApi.Service.Model;
 
-public class BranchModel
+internal class BranchModel
 {
     [JsonPropertyName("name")]
     public string? Name { get; set; }
@@ -10,6 +10,12 @@ public class BranchModel
 
     [JsonPropertyName("protected")]
     public bool? Protected { get; set; }
+
+    [JsonPropertyName("protection")]
+    public ProtectionModel? Protection { get; set; }
+
+    [JsonPropertyName("protection_url")]
+    public string? ProtectionUrl { get; set; }
 }
 
 /*
