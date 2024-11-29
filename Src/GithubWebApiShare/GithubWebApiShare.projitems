@@ -20,8 +20,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CodespaceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CommitModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ProtectionModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RefModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RepositoryModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RequiredStatusChecksModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TagModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TeamModel.cs" />
     <Compile Include="..\GithubWebApiShare\Service\Model\PullCreateModel.cs" />
     <Compile Include="..\GithubWebApiShare\Service\Model\PullPatchModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PullModel.cs" />

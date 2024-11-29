@@ -49,6 +49,43 @@ internal class GithubService : JsonService
         return res;
     }
 
+    // from main branch
+    public async Task<BranchModel?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken)
+    {
+        RefModel? _ref = await GetFromJsonAsync<RefModel>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+
+        var req = new RefModel() { Ref = $"refs/heads/{newBranchName}", Sha = _ref!.Sha };
+        var res = await PostAsJsonAsync<RefModel, BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", req, cancellationToken);
+        return res;
+    }
+
+    /*
+    Response => {
+[
+{
+    "ref": "refs/heads/<already present branch name for ref>",
+    "node_id": "jkdhoOIHOO65464edg66464GNLNLnlnnlnlna==",
+    "url": " https://api.github.com/repos/<your login name>/<Your Repository Name>/git/refs/heads/<already present branch name for ref>",
+    "object": {
+        "sha": "guDSGss85s1KBih546465kkbNNKKbkSGyjes56",
+        "type": "commit",
+        "url": " https://api.github.com/repos/<your login name>/<Your Repository Name>/git/commits/guDSGss85s1KBih546465kkbNNKKbkSGyjes56"
+    }
+}
+]
+}
+    */
+
+    // from other branch
+    public async Task<BranchModel?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken)
+    {
+        RefModel? _ref = await GetFromJsonAsync<RefModel>($"/repos/{owner}/{repo}/git/refs/heads/{branch}", cancellationToken);
+
+        var req = new RefModel() { Ref = $"refs/heads/{newBranchName}", Sha = _ref!.Sha };
+        var res = await PostAsJsonAsync<RefModel, BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", req, cancellationToken);
+        return res;
+    }
+
     #endregion
 
     #region Codespaces
@@ -127,6 +164,19 @@ internal class GithubService : JsonService
     public async Task<RepositoryModel?> GetRepositoryAsync(string owner, string repo, CancellationToken cancellationToken)
     {
         var res = await GetFromJsonAsync<RepositoryModel>($"/repos/{owner}/{repo}", cancellationToken);
+        return res;
+    }
+
+
+    public async Task<IEnumerable<TagModel>?> GetRepositoryTagsAsync(string org, string repo,CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<TeamModel>?> GetRepositoryTeamsAsync(string org, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<TeamModel>>($"/repos/{org}/{repo}/teams", cancellationToken);
         return res;
     }
 
