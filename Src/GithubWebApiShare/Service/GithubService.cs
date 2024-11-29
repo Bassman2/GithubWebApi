@@ -182,6 +182,10 @@ internal class GithubService : JsonService
 
     #endregion
 
+    #region Tags
+
+    #endregion
+
     #region User
 
     public async Task<UserModel?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
