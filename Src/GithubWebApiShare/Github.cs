@@ -60,6 +60,30 @@ public sealed class Github : IDisposable
         return res is not null ? new Branch(res) : null;
     }
 
+    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.CreateBranchAsync(owner, repo, newBranchName, cancellationToken);
+        return res is not null ? new Branch(res) : null;
+    }
+
+    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
+        return res is not null ? new Branch(res) : null;
+    }
+
+    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
+        return res is not null ? new Branch(res) : null;
+    }
+
     #endregion
 
     #region Pull Request
