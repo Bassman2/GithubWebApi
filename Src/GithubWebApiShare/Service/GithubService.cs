@@ -140,23 +140,17 @@ internal partial class GithubService : JsonService
 
     #region Repositories
 
-    public async Task<IEnumerable<RepositoryModel>?> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel>? GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/orgs/{org}/repos", cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/orgs/{org}/repos", cancellationToken);
         return res;
     }  
 
-    public async Task<IEnumerable<RepositoryModel>?> GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel>? GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/user/repos", cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/user/repos", cancellationToken);
         return res;
     }
-
-    //public async Task<IEnumerable<RepositoryModel>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
-    //{
-    //    var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/users/{user}/repos", cancellationToken);
-    //    return res;
-    //}
 
     public IAsyncEnumerable<RepositoryModel>? GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
     {
@@ -164,9 +158,9 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    public async Task<IEnumerable<RepositoryModel>?> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel>? GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/repositories?since={since}", cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/repositories?since={since}", cancellationToken);
         return res;
     }
 

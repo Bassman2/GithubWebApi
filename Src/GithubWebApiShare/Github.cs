@@ -100,20 +100,32 @@ public sealed class Github : IDisposable
 
     #region Repositories
 
-    public async Task<IEnumerable<Repository>?> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository>? GetOrganizationRepositoriesAsync(string org, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetOrganizationRepositoriesAsync(org, cancellationToken);
-        return res?.Select(i => new Repository(i));
+        var res = service.GetOrganizationRepositoriesAsync(org, cancellationToken);
+        if (res is not null)
+        {
+            await foreach (var item in res)
+            {
+                yield return new Repository(item);
+            }
+        }
     }
 
-    public async Task<IEnumerable<Repository>?> GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository>? GetAuthenticatedUserRepositoriesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetAuthenticatedUserRepositoriesAsync(cancellationToken);
-        return res?.Select(i => new Repository(i));
+        var res = service.GetAuthenticatedUserRepositoriesAsync(cancellationToken);
+        if (res is not null)
+        {
+            await foreach (var item in res)
+            {
+                yield return new Repository(item);
+            }
+        }
     }
 
     public async IAsyncEnumerable<Repository>? GetUserRepositoriesAsync(string user, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -121,24 +133,27 @@ public sealed class Github : IDisposable
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
         var res = service.GetUserRepositoriesAsync(user, cancellationToken);
-        if (res is null)
+        if (res is not null)
         {
-            yield break;
+            await foreach (var item in res)
+            {
+                yield return new Repository(item);
+            }
         }
-        await foreach (var item in res)
-        {
-            yield return new Repository(item);
-        }
-
-        //return res?.Select(i => new Repository(i));
     }
 
-    public async Task<IEnumerable<Repository>?> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository>? GetPublicRepositoriesAsync(int since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetPublicRepositoriesAsync(since, cancellationToken);
-        return res?.Select(i => new Repository(i));
+        var res = service.GetPublicRepositoriesAsync(since, cancellationToken);
+        if (res is not null)
+        {
+            await foreach (var item in res)
+            {
+                yield return new Repository(item);
+            }
+        }
     }
 
     public async Task<Repository?> GetRepositoryAsync(string owner, string repo, CancellationToken cancellationToken = default)
