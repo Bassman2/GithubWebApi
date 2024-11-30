@@ -1,5 +1,7 @@
-﻿namespace GithubWebApi;
+﻿
+namespace GithubWebApi;
 
+[DebuggerDisplay("{FullName}")]
 public class Repository
 {
     internal Repository(RepositoryModel model)

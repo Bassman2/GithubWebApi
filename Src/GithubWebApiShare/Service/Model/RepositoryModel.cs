@@ -1,5 +1,6 @@
 ﻿namespace GithubWebApi.Service.Model;
 
+[DebuggerDisplay("{FullName}")]
 internal class RepositoryModel
 {
     [JsonPropertyName("id")]

@@ -10,7 +10,7 @@ public partial class GithubTest
         User? user = await github.GetAuthenticatedUserAsync();
 
         Assert.IsNotNull(user);
-        Assert.AreEqual("Bassman2", user.Login, nameof(user.Login));
+        Assert.AreEqual(testUser, user.Login, nameof(user.Login));
         Assert.AreEqual(29576084, user.Id, nameof(user.Id));
         Assert.AreEqual("MDQ6VXNlcjI5NTc2MDg0", user.NodeId, nameof(user.NodeId));
         Assert.AreEqual("https://avatars.githubusercontent.com/u/29576084?v=4", user.AvatarUrl, nameof(user.AvatarUrl));
@@ -30,10 +30,10 @@ public partial class GithubTest
     {
         using var github = new Github(apiKey!);
 
-        User? user = await github.GetUserAsync("chcg");
+        User? user = await github.GetUserAsync(otherUser);
 
         Assert.IsNotNull(user);
-        Assert.AreEqual("chcg", user.Login, nameof(user.Login));
+        Assert.AreEqual(otherUser, user.Login, nameof(user.Login));
         Assert.AreEqual(12630740, user.Id, nameof(user.Id));
         Assert.AreEqual("MDQ6VXNlcjEyNjMwNzQw", user.NodeId, nameof(user.NodeId));
         Assert.AreEqual("https://avatars.githubusercontent.com/u/12630740?v=4", user.AvatarUrl, nameof(user.AvatarUrl));

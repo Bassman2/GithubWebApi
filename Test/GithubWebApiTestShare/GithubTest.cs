@@ -7,6 +7,7 @@
         private static string? apiKey;
         private static string testUser = "Bassman2";
         private static string testRepo = "ApiTest";
+        private static string otherUser = "chcg";
 
 
 

@@ -14,7 +14,9 @@
 [JsonSerializable(typeof(IEnumerable<PullModel>))]
 [JsonSerializable(typeof(List<PullModel>))]
 [JsonSerializable(typeof(PullPatchModel))]
+
 [JsonSerializable(typeof(RepositoryModel))]
+[JsonSerializable(typeof(IEnumerable<RepositoryModel>))]
 
 
 
