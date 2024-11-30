@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+﻿
 using System.Threading;
 using System.Xml.Linq;
 using static System.Net.WebRequestMethods;
@@ -140,25 +140,25 @@ internal partial class GithubService : JsonService
 
     #region Repositories
 
-    public IAsyncEnumerable<RepositoryModel>? GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
     {
         var res = GetFromJsonYieldAsync<RepositoryModel>($"/orgs/{org}/repos", cancellationToken);
         return res;
     }  
 
-    public IAsyncEnumerable<RepositoryModel>? GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel> GetAuthenticatedUserRepositoriesAsync(CancellationToken cancellationToken)
     {
         var res = GetFromJsonYieldAsync<RepositoryModel>($"/user/repos", cancellationToken);
         return res;
     }
 
-    public IAsyncEnumerable<RepositoryModel>? GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
     {
         var res = GetFromJsonYieldAsync<RepositoryModel>($"/users/{user}/repos", cancellationToken);
         return res;
     }
 
-    public IAsyncEnumerable<RepositoryModel>? GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken)
+    public IAsyncEnumerable<RepositoryModel> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken)
     {
         var res = GetFromJsonYieldAsync<RepositoryModel>($"/repositories?since={since}", cancellationToken);
         return res;
@@ -272,7 +272,7 @@ internal partial class GithubService : JsonService
 
     #region Private
 
-    private async IAsyncEnumerable<T>? GetFromJsonYieldAsync<T>(string? requestUri, [EnumeratorCancellation] CancellationToken cancellationToken, [CallerMemberName] string memberName = "") where T : class
+    private async IAsyncEnumerable<T> GetFromJsonYieldAsync<T>(string? requestUri, [EnumeratorCancellation] CancellationToken cancellationToken, [CallerMemberName] string memberName = "") where T : class
     {
         ArgumentRequestUriException.ThrowIfNullOrWhiteSpace(requestUri, nameof(requestUri));
         WebServiceException.ThrowIfNullOrNotConnected(this);
@@ -303,17 +303,16 @@ internal partial class GithubService : JsonService
 
     private string? NextLink(HttpResponseMessage response)
     {
-        var links = response.Headers.GetValues("link").FirstOrDefault();
-        if (links is not null)
+        if (response.Headers.TryGetValues("link", out var header))
         {
-
+            var links = header.First();
             Match match = LinkRegex().Match(links);
             if (match.Success)
             {
                 string next = match.Groups[1].Value;
                 return next;
             }
-        }    
+        }
         return null;
     }
 

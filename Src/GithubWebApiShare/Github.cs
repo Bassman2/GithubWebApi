@@ -100,7 +100,7 @@ public sealed class Github : IDisposable
 
     #region Repositories
 
-    public async IAsyncEnumerable<Repository>? GetOrganizationRepositoriesAsync(string org, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository> GetOrganizationRepositoriesAsync(string org, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -114,7 +114,7 @@ public sealed class Github : IDisposable
         }
     }
 
-    public async IAsyncEnumerable<Repository>? GetAuthenticatedUserRepositoriesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository> GetAuthenticatedUserRepositoriesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
@@ -128,12 +128,12 @@ public sealed class Github : IDisposable
         }
     }
 
-    public async IAsyncEnumerable<Repository>? GetUserRepositoriesAsync(string user, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository> GetUserRepositoriesAsync(string user, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
         var res = service.GetUserRepositoriesAsync(user, cancellationToken);
-        if (res is not null)
+        //if (res is not null)
         {
             await foreach (var item in res)
             {
@@ -142,7 +142,7 @@ public sealed class Github : IDisposable
         }
     }
 
-    public async IAsyncEnumerable<Repository>? GetPublicRepositoriesAsync(int since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository> GetPublicRepositoriesAsync(int since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 

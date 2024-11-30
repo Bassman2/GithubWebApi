@@ -6,6 +6,22 @@ namespace GithubWebApiTest;
 public partial class GithubTest
 {
     [TestMethod]
+    public async Task TestMethodGetUserEmptyRepositoriesAsync()
+    {
+        using var github = new Github(apiKey!);
+
+        var repos = github.GetUserRepositoriesAsync("Bassman");
+
+        Assert.IsNotNull(repos);
+
+        var list = await repos.ToListAsync();
+        var repo = await repos.FirstOrDefaultAsync();
+
+        Assert.AreEqual(0, list.Count, nameof(list.Count));
+        Assert.IsNull(repo);
+    }
+
+    [TestMethod]
     public async Task TestMethodGetUserRepositoriesAsync()
     {
         using var github = new Github(apiKey!);
