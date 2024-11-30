@@ -1,10 +1,13 @@
-﻿using System.Threading;
+﻿using System.Text.RegularExpressions;
+using System.Threading;
+using System.Xml.Linq;
+using static System.Net.WebRequestMethods;
 
 namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
-internal class GithubService : JsonService
+internal partial class GithubService : JsonService
 {
     private const string defHost = "https://api.github.com";
 
@@ -149,9 +152,15 @@ internal class GithubService : JsonService
         return res;
     }
 
-    public async Task<IEnumerable<RepositoryModel>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
+    //public async Task<IEnumerable<RepositoryModel>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
+    //{
+    //    var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/users/{user}/repos", cancellationToken);
+    //    return res;
+    //}
+
+    public IAsyncEnumerable<RepositoryModel>? GetUserRepositoriesAsync(string user, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<RepositoryModel>>($"/users/{user}/repos", cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/users/{user}/repos", cancellationToken);
         return res;
     }
 
@@ -268,7 +277,52 @@ internal class GithubService : JsonService
 
 
     #region Private
-    
-    
-    #endregin
+
+    private async IAsyncEnumerable<T>? GetFromJsonYieldAsync<T>(string? requestUri, [EnumeratorCancellation] CancellationToken cancellationToken, [CallerMemberName] string memberName = "") where T : class
+    {
+        ArgumentRequestUriException.ThrowIfNullOrWhiteSpace(requestUri, nameof(requestUri));
+        WebServiceException.ThrowIfNullOrNotConnected(this);
+
+        while (requestUri != null)
+        {
+            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+            string str = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ErrorHandlingAsync(response, memberName, cancellationToken);
+            }
+
+            var res = await ReadFromJsonAsync<IEnumerable<T>?>(response, cancellationToken);
+            if (res != null)
+            {
+                foreach (var item in res)
+                {
+                    yield return item;
+                }
+            }
+            requestUri = NextLink(response);
+        }
+    }
+
+    [GeneratedRegex(@"\<([^\<]*)\>;\srel=.next.", RegexOptions.Singleline)]
+    private static partial Regex LinkRegex();
+
+    private string? NextLink(HttpResponseMessage response)
+    {
+        var links = response.Headers.GetValues("link").FirstOrDefault();
+        if (links is not null)
+        {
+
+            Match match = LinkRegex().Match(links);
+            if (match.Success)
+            {
+                string next = match.Groups[1].Value;
+                return next;
+            }
+        }    
+        return null;
+    }
+
+
+    #endregion
 }

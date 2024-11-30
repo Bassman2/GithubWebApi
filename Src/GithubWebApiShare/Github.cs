@@ -116,12 +116,21 @@ public sealed class Github : IDisposable
         return res?.Select(i => new Repository(i));
     }
 
-    public async Task<IEnumerable<Repository>?> GetUserRepositoriesAsync(string user, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Repository>? GetUserRepositoriesAsync(string user, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetUserRepositoriesAsync(user, cancellationToken);
-        return res?.Select(i => new Repository(i));
+        var res = service.GetUserRepositoriesAsync(user, cancellationToken);
+        if (res is null)
+        {
+            yield break;
+        }
+        await foreach (var item in res)
+        {
+            yield return new Repository(item);
+        }
+
+        //return res?.Select(i => new Repository(i));
     }
 
     public async Task<IEnumerable<Repository>?> GetPublicRepositoriesAsync(int since, CancellationToken cancellationToken = default)
