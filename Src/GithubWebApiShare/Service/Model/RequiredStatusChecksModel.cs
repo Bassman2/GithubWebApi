@@ -7,4 +7,7 @@ internal class RequiredStatusChecksModel
 
     [JsonPropertyName("contexts")]
     public List<string>? Contexts { get; set; }
+
+    [JsonPropertyName("checks")]
+    public List<string>? Checks { get; set; }
 }

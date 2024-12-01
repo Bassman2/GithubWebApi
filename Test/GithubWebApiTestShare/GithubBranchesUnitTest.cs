@@ -29,19 +29,14 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
         //Assert.AreEqual("https://api.github.com/repos/chcg/MediaDevices/{archive_format}{/ref}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
     }
 
-    //[TestMethod]
-    //public async Task TestMethodGetBranchAsync()
-    //{
-    //    //using var github = new Github(apiKey!);
+    [TestMethod]
+    public async Task TestMethodGetBranchAsync()
+    {
+        using var github = new Github(apiKey!);
 
-    //    //var repos = github.GetBranchAsync("Bassman");
+        var branch = await github.GetBranchAsync(testUser, testRepo, mainBranch);
 
-    //    //Assert.IsNotNull(repos);
-
-    //    //var list = await repos.ToListAsync();
-    //    //var repo = await repos.FirstOrDefaultAsync();
-
-    //    //Assert.AreEqual(0, list.Count, nameof(list.Count));
-    //    //Assert.IsNull(repo);
-    //}
+        Assert.IsNotNull(branch);
+        Assert.AreEqual(mainBranch, branch.Name, nameof(branch.Name));
+    }
 }

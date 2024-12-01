@@ -7,5 +7,6 @@
         protected const string testUser = "Bassman2";
         protected const string testRepo = "ApiTest";
         protected const string otherUser = "chcg";
+        protected const string mainBranch = "main";
     }
 }

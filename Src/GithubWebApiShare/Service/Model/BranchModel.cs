@@ -8,6 +8,9 @@ internal class BranchModel
     [JsonPropertyName("commit")]
     public CommitModel? Commit { get; set; }
 
+    [JsonPropertyName("_links")]
+    public LinksModel? Links { get; set; }
+
     [JsonPropertyName("protected")]
     public bool? Protected { get; set; }
 
