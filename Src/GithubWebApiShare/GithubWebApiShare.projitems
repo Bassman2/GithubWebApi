@@ -11,8 +11,12 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Branch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RequiredStatusChecks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Extentions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\GithubService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\BranchModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\BranchRenameModel.cs" />
@@ -35,5 +39,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\UserModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Directory.Build.props" />
   </ItemGroup>
 </Project>
