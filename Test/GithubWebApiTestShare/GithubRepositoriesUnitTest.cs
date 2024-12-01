@@ -1,14 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿namespace GithubWebApiTest;
 
-namespace GithubWebApiTest;
-
-public partial class GithubTest
+[TestClass]
+public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
 {
     [TestMethod]
     public async Task TestMethodGetUserEmptyRepositoriesAsync()
     {
-        using var github = new Github(apiKey!);
+        using var github = new Github(apiKey);
 
         var repos = github.GetUserRepositoriesAsync("Bassman");
 
@@ -24,7 +22,7 @@ public partial class GithubTest
     [TestMethod]
     public async Task TestMethodGetUserRepositoriesAsync()
     {
-        using var github = new Github(apiKey!);
+        using var github = new Github(apiKey);
 
         var repos = github.GetUserRepositoriesAsync(otherUser);
 
@@ -47,7 +45,7 @@ public partial class GithubTest
     [TestMethod]
     public async Task TestMethodGetRepositoryAsync()
     {
-        using var github = new Github(apiKey!);
+        using var github = new Github(apiKey);
 
         var repo = await github.GetRepositoryAsync(testUser, testRepo);
 

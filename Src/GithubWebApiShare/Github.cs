@@ -36,12 +36,15 @@ public sealed class Github : IDisposable
 
     #region Branches
 
-    public async Task<IEnumerable<Branch>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Branch> GetBranchesAsync(string owner, string repo, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetBranchesAsync(owner, repo, cancellationToken);
-        return res?.Select(i => new Branch(i)).ToList();
+        var res = service.GetBranchesAsync(owner, repo, cancellationToken);
+        await foreach (var item in res)
+        {
+            yield return new Branch(item);
+        }
     }
 
     public async Task<Branch?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken = default)
@@ -75,15 +78,7 @@ public sealed class Github : IDisposable
         var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
         return res is not null ? new Branch(res) : null;
     }
-
-    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken = default)
-    {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
-
-        var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
-        return res is not null ? new Branch(res) : null;
-    }
-
+    
     #endregion
 
     #region Pull Request

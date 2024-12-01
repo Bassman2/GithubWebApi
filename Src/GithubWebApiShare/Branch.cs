@@ -1,5 +1,6 @@
 ﻿namespace GithubWebApi;
 
+[DebuggerDisplay("{Name}")]
 public class Branch
 {
     internal Branch(BranchModel model)
@@ -11,4 +12,6 @@ public class Branch
     public string? Name { get; }
 
     public bool? Protected { get; }
+
+    public string? ProtectionUrl { get; }
 }

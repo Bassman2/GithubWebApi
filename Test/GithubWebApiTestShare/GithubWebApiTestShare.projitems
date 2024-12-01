@@ -9,9 +9,10 @@
     <Import_RootNamespace>GithubWebApiTest</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)GithubTest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GithubTest.Repositories.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)GithubTest.Users.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubBranchesUnitTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubBaseUnitTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubRepositoriesUnitTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubUsersUnitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
   </ItemGroup>
 </Project>

@@ -33,9 +33,9 @@ internal partial class GithubService : JsonService
 
     #region Branches
 
-    public async Task<IEnumerable<BranchModel>?> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken)
+    public IAsyncEnumerable<BranchModel> GetBranchesAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/branches", cancellationToken);
+        var res = GetFromJsonYieldAsync<BranchModel>($"/repos/{owner}/{repo}/branches", cancellationToken);
         return res;
     }
 
