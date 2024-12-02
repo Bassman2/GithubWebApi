@@ -36,7 +36,31 @@ internal class UserModel
 
     [JsonPropertyName("email")]
     public string? Email { get; set; }
+
+    //public static implicit operator User?(UserModel? model) => model is null ? null : new User(model);
+
+    public static implicit operator User?(UserModel? model)
+    {
+        return model is null ? null : new User()
+        {
+            Login = model.Login,
+            Id = model.Id,
+            NodeId = model.NodeId,
+            AvatarUrl = model.AvatarUrl,
+
+            Type = model.Type,
+            SiteAdmin = model.SiteAdmin,
+            Name = model.Name,
+            Company = model.Company,
+            Location = model.Location,
+            Email = model.Email
+        };
+    }
+   
+
 }
+
+
 
 /*
 {

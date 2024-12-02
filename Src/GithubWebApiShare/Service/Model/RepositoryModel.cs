@@ -35,4 +35,22 @@ internal class RepositoryModel
 
     [JsonPropertyName("archive_url")]
     public string? ArchiveUrl { get; set; }
+
+    public static implicit operator Repository?(RepositoryModel? model)
+    {
+        return model is null ? null : new Repository()
+        {
+            Id = model.Id,
+            NodeId = model.NodeId,
+            Name = model.Name,
+            FullName = model.FullName,
+            Owner = model.Owner,
+            Private = model.Private,
+            HtmlUrl = model.HtmlUrl,
+            Description = model.Description,
+            Fork = model.Fork,
+            Url = model.Url,
+            ArchiveUrl = model.ArchiveUrl
+        };
+    }
 }

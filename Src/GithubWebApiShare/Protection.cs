@@ -2,11 +2,8 @@
 
 public class Protection
 {
-    internal Protection(ProtectionModel model)
-    {
-        this.Enabled = model.Enabled;
-        this.RequiredStatusChecks = new RequiredStatusChecks(model.RequiredStatusChecks);
-    }
+    internal Protection()
+    { }
 
     public bool? Enabled { get; set; }
 

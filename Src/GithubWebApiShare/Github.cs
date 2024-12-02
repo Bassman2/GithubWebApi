@@ -128,7 +128,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return new Repository(item);
+                yield return item!;
             }
         }
     }
@@ -142,7 +142,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return new Repository(item);
+                yield return item!;
             }
         }
     }
@@ -152,11 +152,11 @@ public sealed class Github : IDisposable
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
         var res = service.GetUserRepositoriesAsync(user, cancellationToken);
-        //if (res is not null)
+        if (res is not null)
         {
             await foreach (var item in res)
             {
-                yield return new Repository(item);
+                yield return item!;
             }
         }
     }
@@ -170,7 +170,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return new Repository(item);
+                yield return item!;
             }
         }
     }
@@ -179,8 +179,8 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
-        return res is not null ? new Repository(res) : null;
+        Repository? res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
+        return res;  // is not null ? new Repository(res) : null;
     }
 
     #endregion
@@ -191,24 +191,24 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetAuthenticatedUserAsync(cancellationToken);
-        return res is not null ? new User(res) : null;
+        User? res = await service.GetAuthenticatedUserAsync(cancellationToken);
+        return res; // res is not null ? new User(res) : null;
     }
 
     public async Task<User?> GetUserAsync(string username, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetUserAsync(username, cancellationToken);
-        return res is not null ? new User(res) : null;
+        User? res = await service.GetUserAsync(username, cancellationToken);
+        return res; // res is not null ? new User(res) : null;
     }
 
     public async Task<User?> GetUserAsync(long id, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetUserAsync(id, cancellationToken);
-        return res is not null ? new User(res) : null;
+        User? res = await service.GetUserAsync(id, cancellationToken);
+        return res; // res is not null ? new User(res) : null;
     }
     #endregion
 }
