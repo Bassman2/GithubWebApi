@@ -30,7 +30,7 @@ internal class Program
 
             Console.WriteLine(user?.Login);
         }
-        catch (Exception ex)
+        catch (Exception)
         { }
 
     }
