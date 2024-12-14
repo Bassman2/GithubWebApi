@@ -6,9 +6,12 @@ public sealed class Github : IDisposable
 
     private GithubService? service;
 
-    public Github(string apiKey, string appName = defAppName)
+    public Github(string storeKey, string appName = defAppName)
     {
-        service = new GithubService(apiKey, appName);
+        var key = WebServiceClient.Store.KeyStore.Key(storeKey)!;
+        string host = key.Host!;
+        string token = key.Token!;
+        service = new GithubService(new Uri(host), token, appName);
     }
 
     public Github(Uri host, string apiKey, string appName = defAppName)
