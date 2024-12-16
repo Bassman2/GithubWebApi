@@ -1,15 +1,11 @@
-﻿
-using System.Threading;
-using System.Xml.Linq;
-using static System.Net.WebRequestMethods;
-
-namespace GithubWebApi.Service;
+﻿namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
 internal partial class GithubService : JsonService
 {
     private const string defHost = "https://api.github.com";
+    protected override string? AuthenticationTestUrl => "/user";
 
     public GithubService(string apiKey, string appName) : this(new Uri(defHost), apiKey, appName)
     { }
@@ -20,12 +16,7 @@ internal partial class GithubService : JsonService
         client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
         client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
-
-    protected override void TestAutentication()
-    {
-        //TODO
-    }
-
+    
     #region error handling
 
     //protected override async Task ErrorHandlingAsync(HttpResponseMessage response, string memberName, CancellationToken cancellationToken)
