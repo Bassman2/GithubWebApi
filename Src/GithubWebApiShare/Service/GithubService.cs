@@ -20,11 +20,9 @@ internal partial class GithubService : JsonService
         client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
         client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
+    
+    protected override string? AuthenticationTestUrl => null;
 
-    protected override void TestAutentication()
-    {
-        //TODO
-    }
 
     #region error handling
 
