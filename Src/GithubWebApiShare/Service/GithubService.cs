@@ -17,11 +17,6 @@ internal partial class GithubService : JsonService
         client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
 
-    protected override void TestAutentication()
-    {
-        //TODO
-    }
-
     #region error handling
 
     //protected override async Task ErrorHandlingAsync(HttpResponseMessage response, string memberName, CancellationToken cancellationToken)
