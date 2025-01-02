@@ -290,14 +290,14 @@ internal partial class GithubService : JsonService
                     yield return item;
                 }
             }
-            requestUri = NextLink(response);
+            requestUri = GithubService.NextLink(response);
         }
     }
 
     [GeneratedRegex(@"\<([^\<]*)\>;\srel=.next.", RegexOptions.Singleline)]
     private static partial Regex LinkRegex();
 
-    private string? NextLink(HttpResponseMessage response)
+    private static string? NextLink(HttpResponseMessage response)
     {
         if (response.Headers.TryGetValues("link", out var header))
         {
