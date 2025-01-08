@@ -2,6 +2,8 @@
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
+// https://stackoverflow.com/questions/25022016/get-all-file-names-from-a-github-repo-through-the-github-api
+
 internal partial class GithubService : JsonService
 {
     private const string defHost = "https://api.github.com";
