@@ -5,12 +5,11 @@
 internal partial class GithubService : JsonService
 {
     private const string defHost = "https://api.github.com";
+
     protected override string? AuthenticationTestUrl => "/user";
 
-    public GithubService(string apiKey, string appName) : this(new Uri(defHost), apiKey, appName)
-    { }
-
-    public GithubService(Uri host, string apiKey, string appName) : base(host, SourceGenerationContext.Default, new BearerAuthenticator(apiKey))
+    public GithubService(Uri host, IAuthenticator? authenticator, string appName)
+    : base(host, authenticator, appName, SourceGenerationContext.Default)
     {
         client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
         client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
