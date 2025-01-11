@@ -6,7 +6,7 @@ public partial class GithubUsersUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetAuthenticatedUserAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
         User? user = await github.GetAuthenticatedUserAsync();
 
@@ -29,7 +29,7 @@ public partial class GithubUsersUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetUserNameAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
         User? user = await github.GetUserAsync(otherUser);
 
@@ -50,7 +50,7 @@ public partial class GithubUsersUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetUserIdAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
         User? user = await github.GetUserAsync(12630740);
 

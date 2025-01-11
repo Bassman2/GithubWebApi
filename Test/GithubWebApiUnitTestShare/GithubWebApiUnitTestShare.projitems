@@ -6,7 +6,7 @@
     <SharedGUID>67e7ea91-001f-4499-9e81-2513bc5fb50c</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>GithubWebApiTest</Import_RootNamespace>
+    <Import_RootNamespace>GithubWebApiUnitTest</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)GithubBranchesUnitTest.cs" />

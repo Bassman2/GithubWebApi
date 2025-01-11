@@ -5,8 +5,8 @@
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>GithubWebApiTest</AssemblyName>
-    <RootNamespace>GithubWebApiTest</RootNamespace>
+    <AssemblyName>GithubWebApiUnitTest</AssemblyName>
+    <RootNamespace>GithubWebApiUnitTest</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,6 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
-  <Import Project="..\GithubWebApiTestShare\GithubWebApiTestShare.projitems" Label="Shared" />
+  <Import Project="..\GithubWebApiUnitTestShare\GithubWebApiUnitTestShare.projitems" Label="Shared" />
 
 </Project>

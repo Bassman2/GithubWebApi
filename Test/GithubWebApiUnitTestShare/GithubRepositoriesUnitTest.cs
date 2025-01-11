@@ -6,7 +6,7 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetUserEmptyRepositoriesAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
         var repos = github.GetUserRepositoriesAsync("Bassman");
 
@@ -22,7 +22,7 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetUserRepositoriesAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
         var repos = github.GetUserRepositoriesAsync(otherUser);
 
@@ -45,9 +45,9 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetRepositoryAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
-        var repo = await github.GetRepositoryAsync(testUser, testRepo);
+        var repo = await github.GetRepositoryAsync(testUser, testRepoFix);
 
         Assert.IsNotNull(repo);
         Assert.AreEqual(895756728, repo.Id, nameof(repo.Id));

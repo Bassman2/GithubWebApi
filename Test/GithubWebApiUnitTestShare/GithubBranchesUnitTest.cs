@@ -8,9 +8,9 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetBranchesAsync()
     {
-        using var github = new Github(apiKey);
+        using var github = new Github(storeKey, appName);
 
-        var branches = github.GetBranchesAsync(testUser, testRepo);
+        var branches = github.GetBranchesAsync(testUser, testRepoFix);
 
         Assert.IsNotNull(branches);
         var list = await branches.ToListAsync();
@@ -32,9 +32,9 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
     [TestMethod]
     public async Task TestMethodGetBranchAsync()
     {
-        using var github = new Github(apiKey!);
+        using var github = new Github(storeKey, appName);
 
-        var branch = await github.GetBranchAsync(testUser, testRepo, mainBranch);
+        var branch = await github.GetBranchAsync(testUser, testRepoFix, mainBranch);
 
         Assert.IsNotNull(branch);
         Assert.AreEqual(mainBranch, branch.Name, nameof(branch.Name));

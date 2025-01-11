@@ -19,11 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubWebApiDemo90", "Demo\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{53A8488B-3401-4C85-A585-EBFCA7FE273D}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GithubWebApiTestShare", "Test\GithubWebApiTestShare\GithubWebApiTestShare.shproj", "{67E7EA91-001F-4499-9E81-2513BC5FB50C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubWebApiUnitTest80", "Test\GithubWebApiUnitTest80\GithubWebApiUnitTest80.csproj", "{CE8289B7-0075-4758-BE96-2C60996063D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubWebApiTest90", "Test\GithubWebApiTest90\GithubWebApiTest90.csproj", "{36105A81-1E38-4553-9F82-6238F9399728}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubWebApiUnitTest90", "Test\GithubWebApiUnitTest90\GithubWebApiUnitTest90.csproj", "{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubWebApiTest80", "Test\GithubWebApiTest80\GithubWebApiTest80.csproj", "{2AAEB00A-C6D7-41B0-B794-8324A034AA09}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GithubWebApiUnitTestShare", "Test\GithubWebApiUnitTestShare\GithubWebApiUnitTestShare.shproj", "{67E7EA91-001F-4499-9E81-2513BC5FB50C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +43,14 @@ Global
 		{7C0310C1-5B64-471A-BAF7-FE7909D350D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C0310C1-5B64-471A-BAF7-FE7909D350D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C0310C1-5B64-471A-BAF7-FE7909D350D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36105A81-1E38-4553-9F82-6238F9399728}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36105A81-1E38-4553-9F82-6238F9399728}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36105A81-1E38-4553-9F82-6238F9399728}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36105A81-1E38-4553-9F82-6238F9399728}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AAEB00A-C6D7-41B0-B794-8324A034AA09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AAEB00A-C6D7-41B0-B794-8324A034AA09}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AAEB00A-C6D7-41B0-B794-8324A034AA09}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AAEB00A-C6D7-41B0-B794-8324A034AA09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE8289B7-0075-4758-BE96-2C60996063D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE8289B7-0075-4758-BE96-2C60996063D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE8289B7-0075-4758-BE96-2C60996063D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE8289B7-0075-4758-BE96-2C60996063D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,19 +61,19 @@ Global
 		{B2F32CCE-47A6-453C-9592-A8F3A5A1E6FC} = {A775298C-1C54-454A-9C37-5C787F48E5A2}
 		{D3C9EE66-AAB5-490A-862B-ECBFF6857851} = {A775298C-1C54-454A-9C37-5C787F48E5A2}
 		{7C0310C1-5B64-471A-BAF7-FE7909D350D0} = {E5286374-E92B-4F03-B9DB-53A95485BC1B}
+		{CE8289B7-0075-4758-BE96-2C60996063D7} = {53A8488B-3401-4C85-A585-EBFCA7FE273D}
+		{F8FBBBDA-E453-414A-A9C7-3B6E69426AFB} = {53A8488B-3401-4C85-A585-EBFCA7FE273D}
 		{67E7EA91-001F-4499-9E81-2513BC5FB50C} = {53A8488B-3401-4C85-A585-EBFCA7FE273D}
-		{36105A81-1E38-4553-9F82-6238F9399728} = {53A8488B-3401-4C85-A585-EBFCA7FE273D}
-		{2AAEB00A-C6D7-41B0-B794-8324A034AA09} = {53A8488B-3401-4C85-A585-EBFCA7FE273D}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Test\GithubWebApiTestShare\GithubWebApiTestShare.projitems*{2aaeb00a-c6d7-41b0-b794-8324a034aa09}*SharedItemsImports = 5
-		Test\GithubWebApiTestShare\GithubWebApiTestShare.projitems*{36105a81-1e38-4553-9f82-6238f9399728}*SharedItemsImports = 5
 		Src\GithubWebApiShare\GithubWebApiShare.projitems*{41e11ca1-a727-40a8-bb1f-16ba0f615adf}*SharedItemsImports = 5
 		..\WebServiceClient\Src\WebServiceClientShare\WebServiceClientShare.projitems*{41e11ca1-a727-40a8-bb1f-16ba0f615adf}*SharedItemsImports = 5
-		Test\GithubWebApiTestShare\GithubWebApiTestShare.projitems*{67e7ea91-001f-4499-9e81-2513bc5fb50c}*SharedItemsImports = 13
+		Test\GithubWebApiUnitTestShare\GithubWebApiUnitTestShare.projitems*{67e7ea91-001f-4499-9e81-2513bc5fb50c}*SharedItemsImports = 13
 		..\WebServiceClient\Src\WebServiceClientShare\WebServiceClientShare.projitems*{8caacb04-9656-4b7c-a692-422fca51474b}*SharedItemsImports = 13
 		Src\GithubWebApiShare\GithubWebApiShare.projitems*{b2f32cce-47a6-453c-9592-a8f3a5a1e6fc}*SharedItemsImports = 13
+		Test\GithubWebApiUnitTestShare\GithubWebApiUnitTestShare.projitems*{ce8289b7-0075-4758-be96-2c60996063d7}*SharedItemsImports = 5
 		Src\GithubWebApiShare\GithubWebApiShare.projitems*{d3c9ee66-aab5-490a-862b-ecbff6857851}*SharedItemsImports = 5
 		..\WebServiceClient\Src\WebServiceClientShare\WebServiceClientShare.projitems*{d3c9ee66-aab5-490a-862b-ecbff6857851}*SharedItemsImports = 5
+		Test\GithubWebApiUnitTestShare\GithubWebApiUnitTestShare.projitems*{f8fbbbda-e453-414a-a9c7-3b6e69426afb}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
