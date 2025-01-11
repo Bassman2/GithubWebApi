@@ -15,6 +15,3 @@ internal class PullCreateModel
     public string? Base { get; set; }
 }
 
-
-
-// {"title":"Amazing new feature","body":"Please pull these awesome changes in!","head":"octocat:new-feature","base":"master"}'

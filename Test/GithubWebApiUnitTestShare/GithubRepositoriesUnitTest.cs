@@ -50,15 +50,15 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
         var repo = await github.GetRepositoryAsync(testUser, testRepoFix);
 
         Assert.IsNotNull(repo);
-        Assert.AreEqual(895756728, repo.Id, nameof(repo.Id));
-        Assert.AreEqual("R_kgDONWQpuA", repo.NodeId, nameof(repo.NodeId));
-        Assert.AreEqual("ApiTest", repo.Name, nameof(repo.Name));
-        Assert.AreEqual("Bassman2/ApiTest", repo.FullName, nameof(repo.FullName));
+        Assert.AreEqual(915278053, repo.Id, nameof(repo.Id));
+        Assert.AreEqual("R_kgDONo4I5Q", repo.NodeId, nameof(repo.NodeId));
+        Assert.AreEqual(testRepoFix, repo.Name, nameof(repo.Name));
+        Assert.AreEqual($"{testUser}/{testRepoFix}", repo.FullName, nameof(repo.FullName));
 
-        Assert.AreEqual(true, repo.Private, nameof(repo.Private));
-        Assert.AreEqual(null, repo.Description, nameof(repo.Description));
+        Assert.AreEqual(false, repo.Private, nameof(repo.Private));
+        Assert.AreEqual("Test repository for fix tests", repo.Description, nameof(repo.Description));
         Assert.AreEqual(false, repo.Fork, nameof(repo.Fork));
-        Assert.AreEqual("https://api.github.com/repos/Bassman2/ApiTest", repo.Url, nameof(repo.Url));
-        Assert.AreEqual("https://api.github.com/repos/Bassman2/ApiTest/{archive_format}{/ref}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
+        Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}", repo.Url, nameof(repo.Url));
+        Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/{{archive_format}}{{/ref}}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
     }
 }

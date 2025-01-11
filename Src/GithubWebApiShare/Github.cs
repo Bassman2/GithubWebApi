@@ -127,7 +127,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -141,7 +141,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -155,7 +155,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!; 
             }
         }
     }
@@ -169,7 +169,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -178,8 +178,8 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        Repository? res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
-        return res;  // is not null ? new Repository(res) : null;
+        var res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
+        return res.CastModel<Repository>();  
     }
 
     #endregion
@@ -190,24 +190,25 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetAuthenticatedUserAsync(cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetAuthenticatedUserAsync(cancellationToken);
+        return res.CastModel<User>(); 
     }
 
     public async Task<User?> GetUserAsync(string username, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetUserAsync(username, cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetUserAsync(username, cancellationToken);
+        return res.CastModel<User>();
     }
 
     public async Task<User?> GetUserAsync(long id, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetUserAsync(id, cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetUserAsync(id, cancellationToken);
+        return res.CastModel<User>();
     }
+
     #endregion
 }

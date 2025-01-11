@@ -4,8 +4,20 @@ namespace GithubWebApi;
 [DebuggerDisplay("{FullName}")]
 public class Repository
 {
-    internal Repository()
-    { }
+    internal Repository(RepositoryModel model)
+    {
+        this.Id = model.Id;
+        this.NodeId = model.NodeId;
+        this.Name = model.Name;
+        this.FullName = model.FullName;
+        this.Owner = model.Owner.CastModel<User>();
+        this.Private = model.Private;
+        this.HtmlUrl = model.HtmlUrl;
+        this.Description = model.Description;
+        this.Fork = model.Fork;
+        this.Url = model.Url;
+        this.ArchiveUrl = model.ArchiveUrl;
+    }
 
     public long? Id { get; internal init; }
 

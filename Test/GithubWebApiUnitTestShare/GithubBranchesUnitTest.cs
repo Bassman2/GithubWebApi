@@ -14,19 +14,16 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
 
         Assert.IsNotNull(branches);
         var list = await branches.ToListAsync();
-        //var repo = await repos.FirstOrDefaultAsync(r => r.Name == "MediaDevices");
 
-        //Assert.IsNotNull(repo);
-        //Assert.AreEqual(109999901, repo.Id, nameof(repo.Id));
-        //Assert.AreEqual("MDEwOlJlcG9zaXRvcnkxMDk5OTk5MDE=", repo.NodeId, nameof(repo.NodeId));
-        //Assert.AreEqual("MediaDevices", repo.Name, nameof(repo.Name));
-        //Assert.AreEqual("chcg/MediaDevices", repo.FullName, nameof(repo.FullName));
+        var branch = list.Single(b => b.Name == "BranchA");
+        Assert.IsNotNull(branch, nameof(branch));
 
-        //Assert.AreEqual(false, repo.Private, nameof(repo.Private));
-        //Assert.AreEqual("MTP Library", repo.Description, nameof(repo.Description));
-        //Assert.AreEqual(true, repo.Fork, nameof(repo.Fork));
-        //Assert.AreEqual("https://api.github.com/repos/chcg/MediaDevices", repo.Url, nameof(repo.Url));
-        //Assert.AreEqual("https://api.github.com/repos/chcg/MediaDevices/{archive_format}{/ref}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
+        Assert.AreEqual("BranchA", branch.Name, nameof(branch.Name));
+        Assert.IsNotNull(branch.Commit, nameof(branch.Commit));
+        Assert.IsNull(branch.Links, nameof(branch.Links));
+        Assert.AreEqual(false, branch.Protected, nameof(branch.Protected));
+        Assert.IsNull(branch.Protection, nameof(branch.Protection));
+        Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/branches/BranchA/protection", branch.ProtectionUrl, nameof(branch.ProtectionUrl));
     }
 
     [TestMethod]
@@ -34,9 +31,15 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
     {
         using var github = new Github(storeKey, appName);
 
-        var branch = await github.GetBranchAsync(testUser, testRepoFix, mainBranch);
+        var branch = await github.GetBranchAsync(testUser, testRepoFix, "BranchA");
 
-        Assert.IsNotNull(branch);
-        Assert.AreEqual(mainBranch, branch.Name, nameof(branch.Name));
+        Assert.IsNotNull(branch, nameof(branch));
+
+        Assert.AreEqual("BranchA", branch.Name, nameof(branch.Name));
+        Assert.IsNotNull(branch.Commit, nameof(branch.Commit));
+        Assert.IsNotNull(branch.Links, nameof(branch.Links));
+        Assert.AreEqual(false, branch.Protected, nameof(branch.Protected));
+        Assert.IsNull(branch.Protection, nameof(branch.Protection));
+        Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/branches/BranchA/protection", branch.ProtectionUrl, nameof(branch.ProtectionUrl));
     }
 }
