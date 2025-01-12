@@ -31,6 +31,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceObjectModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RefModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReleaseCreateModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReleaseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RepositoryModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RequiredStatusChecksModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TagModel.cs" />

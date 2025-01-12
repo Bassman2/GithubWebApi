@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using GithubWebApi.Service.Model;
+using Microsoft.VisualBasic.FileIO;
 using System.Threading;
 
 namespace GithubWebApi.Service;
@@ -209,6 +210,28 @@ internal partial class GithubService : JsonService
 
     #endregion
 
+    #region Releases
+
+    // https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28
+
+    public async Task<ReleaseModel?> CreateRelease(string owner, string repo, object tag, CancellationToken cancellationToken)
+    {
+        var req = new ReleaseCreateModel()
+        {
+            TagName = "v1.0.0",
+             TargetCommitish = "master",
+             Name = "v1.0.0" ,
+             Body = "Description of the release",
+             Draft = false,
+             Prerelease = false,
+             GenerateReleaseNotes = false
+        };
+        var res = await PostAsJsonAsync<ReleaseCreateModel, ReleaseModel>($"/repos/{owner}/{repo}/releases", req, cancellationToken);
+        return res;
+    }
+
+
+    #endregion
     #region Repositories
 
     public IAsyncEnumerable<RepositoryModel> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
