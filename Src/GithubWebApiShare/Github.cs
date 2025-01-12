@@ -62,20 +62,40 @@ public sealed class Github : IDisposable
         return res is not null ? new Branch(res) : null;
     }
 
-    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
+    public async Task<Reference?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.CreateBranchAsync(owner, repo, newBranchName, cancellationToken);
-        return res is not null ? new Branch(res) : null;
+        var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
+        string sha = refs!.Last().Object!.Sha!;
+
+        var res = await service.CreateHeadReferenceAsync(owner, repo, sha, newBranchName, cancellationToken);
+        return res.CastModel<Reference>();
     }
 
-    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken = default)
+    public async Task<Reference?> CreateBranchAsync(string owner, string repo, string branchName, string newBranchName, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
-        return res is not null ? new Branch(res) : null;
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
+        if(branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
+
+        //var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
+        //string? sha = refs?.First(r => r.Ref?.Substring(r.Ref.LastIndexOf('/') + 1) == branch)?.Object!.Sha;
+        //if (sha == null) throw new ArgumentException(branch, nameof(branch));
+
+        var res = await service.CreateHeadReferenceAsync(owner, repo, branch.Object!.Sha!, newBranchName, cancellationToken);
+        return res.CastModel<Reference>();
+    }
+
+    public async Task DeleteBranchAsync(string owner, string repo, string branchName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
+        if (branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
+
+        await service.DeleteReferenceAsync(owner, repo, branch.Ref!, cancellationToken);
     }
     
     #endregion

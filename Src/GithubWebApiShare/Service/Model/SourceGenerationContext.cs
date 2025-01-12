@@ -20,7 +20,8 @@
 [JsonSerializable(typeof(RepositoryModel))]
 [JsonSerializable(typeof(IEnumerable<RepositoryModel>))]
 
-
+[JsonSerializable(typeof(IEnumerable<ReferenceModel>))]
+[JsonSerializable(typeof(IEnumerable<RefModel>))]
 
 [JsonSerializable(typeof(UserModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext

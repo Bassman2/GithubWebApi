@@ -1,4 +1,7 @@
-﻿namespace GithubWebApi.Service;
+﻿using Microsoft.VisualBasic.FileIO;
+using System.Threading;
+
+namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
@@ -47,40 +50,49 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    // from main branch
-    public async Task<BranchModel?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken)
-    {
-        RefModel? _ref = await GetFromJsonAsync<RefModel>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+    /// <summary>
+    /// Create a new branch from the main branch
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <param name="repo"></param>
+    /// <param name="newBranchName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
 
-        var req = new RefModel() { Ref = $"refs/heads/{newBranchName}", Sha = _ref!.Sha };
-        var res = await PostAsJsonAsync<RefModel, BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", req, cancellationToken);
+    // https://docs.github.com/de/rest/git/refs?apiVersion=2022-11-28#create-a-reference
+    public async Task<ReferenceModel?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken)
+    {
+        var refs = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+
+        var req = new RefModel()
+        {
+            Ref = $"refs/heads/{newBranchName}",
+            Sha = refs!.First().Object!.Sha
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
         return res;
     }
 
-    /*
-    Response => {
-[
-{
-    "ref": "refs/heads/<already present branch name for ref>",
-    "node_id": "jkdhoOIHOO65464edg66464GNLNLnlnnlnlna==",
-    "url": " https://api.github.com/repos/<your login name>/<Your Repository Name>/git/refs/heads/<already present branch name for ref>",
-    "object": {
-        "sha": "guDSGss85s1KBih546465kkbNNKKbkSGyjes56",
-        "type": "commit",
-        "url": " https://api.github.com/repos/<your login name>/<Your Repository Name>/git/commits/guDSGss85s1KBih546465kkbNNKKbkSGyjes56"
-    }
-}
-]
-}
-    */
-
-    // from other branch
-    public async Task<BranchModel?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken)
+    /// <summary>
+    /// Create a new branch from the given branch 
+    /// </summary>
+    /// <param name="owner"></param>
+    /// <param name="repo"></param>
+    /// <param name="branch"></param>
+    /// <param name="newBranchName"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    // https://docs.github.com/de/rest/git/refs?apiVersion=2022-11-28#create-a-reference
+    public async Task<ReferenceModel?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken)
     {
         RefModel? _ref = await GetFromJsonAsync<RefModel>($"/repos/{owner}/{repo}/git/refs/heads/{branch}", cancellationToken);
 
-        var req = new RefModel() { Ref = $"refs/heads/{newBranchName}", Sha = _ref!.Sha };
-        var res = await PostAsJsonAsync<RefModel, BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", req, cancellationToken);
+        var req = new RefModel() 
+        { 
+            Ref = $"refs/heads/{newBranchName}", 
+            Sha = _ref!.Sha 
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
         return res;
     }
 
@@ -130,6 +142,70 @@ internal partial class GithubService : JsonService
     //    var res = await PatchAsJsonAsync<PullPatchModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
     //    return res;
     //}
+
+    #endregion
+
+    #region References
+
+    // https://docs.github.com/en/rest/git/refs?apiVersion=2022-11-28
+
+    
+    public async Task<ReferenceModel?> GetHeadReferenceAsync(string owner, string repo, string branchName, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<ReferenceModel>($"/repos/{owner}/{repo}/git/ref/heads/{branchName}", cancellationToken);
+        return res;
+    }
+
+    public async Task<ReferenceModel?> GetTagReferenceAsync(string owner, string repo, string tagName, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<ReferenceModel>($"/repos/{owner}/{repo}/git/ref/tags/{tagName}", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<ReferenceModel>?> GetReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<ReferenceModel>?> GetHeadReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+        return res;
+    }
+
+    public async Task<IEnumerable<ReferenceModel>?> GetTagReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/tags", cancellationToken);
+        return res;
+    }
+
+    public async Task<ReferenceModel?> CreateHeadReferenceAsync(string owner, string repo, string reference, string name, CancellationToken cancellationToken)
+    {
+        var req = new RefModel()
+        {
+            Ref = $"refs/heads/{name}",
+            Sha = reference
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
+        return res;
+    }
+
+    public async Task<ReferenceModel?> CreateTagReferenceAsync(string owner, string repo, string reference, string name, CancellationToken cancellationToken)
+    {
+        var req = new RefModel()
+        {
+            Ref = $"refs/tags/{name}",
+            Sha = reference
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
+        return res;
+    }
+
+    public async Task DeleteReferenceAsync(string owner, string repo, string reference, CancellationToken cancellationToken)
+    {
+        await DeleteAsync($"/repos/{owner}/{repo}/git/{reference}", cancellationToken);
+    }
 
     #endregion
 
@@ -184,6 +260,12 @@ internal partial class GithubService : JsonService
 
     #endregion
 
+    #region Tree
+
+    // https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28
+
+    #endregion
+
     #region User
 
     public async Task<UserModel?> GetAuthenticatedUserAsync(CancellationToken cancellationToken)
@@ -217,52 +299,7 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    /*
-
-    [
-  {
-    "ref": "refs/heads/AED2-8320_display_username_after_signin",
-    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItODMyMF9kaXNwbGF5X3VzZXJuYW1lX2FmdGVyX3NpZ25pbg==",
-    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-8320_display_username_after_signin",
-    "object": {
-      "sha": "d480f41ab6c419d01e581ff71076db7aa330d332",
-      "type": "commit",
-      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/d480f41ab6c419d01e581ff71076db7aa330d332"
-    }
-  },
-  {
-    "ref": "refs/heads/AED2-11937_POC_thinking_4.2",
-    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItMTE5MzdfUE9DX3RoaW5raW5nXzQuMg==",
-    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-11937_POC_thinking_4.2",
-    "object": {
-      "sha": "873f1a48b123c06a0e112a1141e6c7245ef023dd",
-      "type": "commit",
-      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/873f1a48b123c06a0e112a1141e6c7245ef023dd"
-    }
-  },
-  {
-    "ref": "refs/heads/AED2-16547_VC_state_on_service_start",
-    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL0FFRDItMTY1NDdfVkNfc3RhdGVfb25fc2VydmljZV9zdGFydA==",
-    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/AED2-16547_VC_state_on_service_start",
-    "object": {
-      "sha": "f7f599bce018a05a5eeadec1d2b4ab1c9241e2f1",
-      "type": "commit",
-      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/f7f599bce018a05a5eeadec1d2b4ab1c9241e2f1"
-    }
-  },
-  {
-    "ref": "refs/heads/asterix2-4.2",
-    "node_id": "MDM6UmVmNjg1MzpyZWZzL2hlYWRzL2FzdGVyaXgyLTQuMg==",
-    "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/refs/heads/asterix2-4.2",
-    "object": {
-      "sha": "77707bfb4dc9f59d1cdaa8960fc568be3117850c",
-      "type": "commit",
-      "url": "https://gitext.elektrobitautomotive.com/api/v3/repos/EB-GUIDE-Speech/aacs-app/git/commits/77707bfb4dc9f59d1cdaa8960fc568be3117850c"
-    }
-  },
-
-
-    */
+   
 
 
     #region Private

@@ -42,4 +42,44 @@ public partial class GithubBranchesUnitTest :  GithubBaseUnitTest
         Assert.IsNull(branch.Protection, nameof(branch.Protection));
         Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/branches/BranchA/protection", branch.ProtectionUrl, nameof(branch.ProtectionUrl));
     }
+
+    [TestMethod]
+    public async Task TestMethodCreateBranchFromMainAsync()
+    {
+        using var github = new Github(storeKey, appName);
+
+        var reference = await github.CreateBranchAsync(testUser, testRepoDyn, "Branch1");
+
+        Assert.IsNotNull(reference, nameof(reference));
+
+        Assert.AreEqual("refs/heads/Branch1", reference.Ref, nameof(reference.Ref));
+        Assert.IsNotNull(reference.NodeId, nameof(reference.NodeId));
+        Assert.AreEqual("https://api.github.com/repos/Bassman2/WS-Test-Dyn/git/refs/heads/Branch1", reference.Url, nameof(reference.Url));
+        Assert.IsNotNull(reference.Object, nameof(reference.Object));
+        Assert.IsNotNull(reference.Object.Sha, nameof(reference.Object.Sha));
+        Assert.AreEqual("commit", reference.Object.Type, nameof(reference.Object.Type));
+        Assert.IsNotNull(reference.Object.Url, nameof(reference.Object.Url));
+
+        await github.DeleteBranchAsync(testUser, testRepoDyn, "Branch1");
+    }
+
+    [TestMethod]
+    public async Task TestMethodCreateBranchFromOtherAsync()
+    {
+        using var github = new Github(storeKey, appName);
+
+        var reference = await github.CreateBranchAsync(testUser, testRepoDyn, "BranchA", "Branch2");
+
+        Assert.IsNotNull(reference, nameof(reference));
+
+        Assert.AreEqual("refs/heads/Branch2", reference.Ref, nameof(reference.Ref));
+        Assert.IsNotNull(reference.NodeId, nameof(reference.NodeId));
+        Assert.AreEqual("https://api.github.com/repos/Bassman2/WS-Test-Dyn/git/refs/heads/Branch2", reference.Url, nameof(reference.Url));
+        Assert.IsNotNull(reference.Object, nameof(reference.Object));
+        Assert.IsNotNull(reference.Object.Sha, nameof(reference.Object.Sha));
+        Assert.AreEqual("commit", reference.Object.Type, nameof(reference.Object.Type));
+        Assert.IsNotNull(reference.Object.Url, nameof(reference.Object.Url));
+
+        await github.DeleteBranchAsync(testUser, testRepoDyn, "Branch2");
+    }
 }
