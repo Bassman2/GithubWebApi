@@ -6,17 +6,13 @@ public sealed class Github : IDisposable
 
     private GithubService? service;
 
-    public Github(string storeKey, string appName = defAppName)
-    {
-        var key = WebServiceClient.Store.KeyStore.Key(storeKey)!;
-        string host = key.Host!;
-        string token = key.Token!;
-        service = new GithubService(new Uri(host), token, appName);
-    }
+    public Github(string storeKey, string appName)
+        : this(new Uri(KeyStore.Key(storeKey)?.Host!), KeyStore.Key(storeKey)!.Token!, appName)
+    { }
 
-    public Github(Uri host, string apiKey, string appName = defAppName)
+    public Github(Uri host, string token, string appName)
     {
-        service = new GithubService(host, apiKey, appName);
+        service = new GithubService(host, new BearerAuthenticator(token), appName);
     }
 
     public void Dispose()
@@ -66,20 +62,40 @@ public sealed class Github : IDisposable
         return res is not null ? new Branch(res) : null;
     }
 
-    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
+    public async Task<Reference?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.CreateBranchAsync(owner, repo, newBranchName, cancellationToken);
-        return res is not null ? new Branch(res) : null;
+        var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
+        string sha = refs!.Last().Object!.Sha!;
+
+        var res = await service.CreateHeadReferenceAsync(owner, repo, sha, newBranchName, cancellationToken);
+        return res.CastModel<Reference>();
     }
 
-    public async Task<Branch?> CreateBranchAsync(string owner, string repo, string branch, string newBranchName, CancellationToken cancellationToken = default)
+    public async Task<Reference?> CreateBranchAsync(string owner, string repo, string branchName, string newBranchName, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.CreateBranchAsync(owner, repo, branch, newBranchName, cancellationToken);
-        return res is not null ? new Branch(res) : null;
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
+        if(branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
+
+        //var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
+        //string? sha = refs?.First(r => r.Ref?.Substring(r.Ref.LastIndexOf('/') + 1) == branch)?.Object!.Sha;
+        //if (sha == null) throw new ArgumentException(branch, nameof(branch));
+
+        var res = await service.CreateHeadReferenceAsync(owner, repo, branch.Object!.Sha!, newBranchName, cancellationToken);
+        return res.CastModel<Reference>();
+    }
+
+    public async Task DeleteBranchAsync(string owner, string repo, string branchName, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
+        if (branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
+
+        await service.DeleteReferenceAsync(owner, repo, branch.Ref!, cancellationToken);
     }
     
     #endregion
@@ -131,7 +147,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -145,7 +161,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -159,7 +175,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!; 
             }
         }
     }
@@ -173,7 +189,7 @@ public sealed class Github : IDisposable
         {
             await foreach (var item in res)
             {
-                yield return item!;
+                yield return item.CastModel<Repository>()!;
             }
         }
     }
@@ -182,8 +198,8 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        Repository? res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
-        return res;  // is not null ? new Repository(res) : null;
+        var res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
+        return res.CastModel<Repository>();  
     }
 
     #endregion
@@ -194,24 +210,25 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetAuthenticatedUserAsync(cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetAuthenticatedUserAsync(cancellationToken);
+        return res.CastModel<User>(); 
     }
 
     public async Task<User?> GetUserAsync(string username, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetUserAsync(username, cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetUserAsync(username, cancellationToken);
+        return res.CastModel<User>();
     }
 
     public async Task<User?> GetUserAsync(long id, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        User? res = await service.GetUserAsync(id, cancellationToken);
-        return res; // res is not null ? new User(res) : null;
+        var res = await service.GetUserAsync(id, cancellationToken);
+        return res.CastModel<User>();
     }
+
     #endregion
 }

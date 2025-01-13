@@ -3,38 +3,35 @@
 [DebuggerDisplay("{Name}")]
 public class Commit
 {
-    internal Commit()
-    { }
-
     internal Commit(CommitModel model)
     {
         this.Sha = model.Sha;
-        this.NodeId = NodeId;
+        this.NodeId = model.NodeId;
         //this.Commit
         this.Url = model.Url; 
         this.HtmlUrl = model.HtmlUrl;
         this.CommentsUrl = model.CommentsUrl;
-        this.Author = model.Author; //.Facade<User>();
-        this.Committer = model.Committer; //.Facade<User>();
-        this.Parents = model.Parents;
+        this.Author = model.Author.CastModel<User>(); 
+        this.Committer = model.Committer.CastModel<User>(); 
+        //this.Parents = model.Parents;
     }
 
-    public string? Sha { get; internal init; }
+    public string? Sha { get; }
 
-    public string? NodeId { get; internal init; }
+    public string? NodeId { get; }
 
     //public CommitCommitModel? Commit { get; internal init;  }
 
-    public string? Url { get; internal init; }
+    public string? Url { get; }
 
-    public string? HtmlUrl { get; internal init; }
+    public string? HtmlUrl { get; }
 
-    public string? CommentsUrl { get; internal init; }
+    public string? CommentsUrl { get; }
 
-    public User? Author { get; internal init; }
+    public User? Author { get; }
 
-    public User? Committer { get; internal init; }
+    public User? Committer { get; }
 
-    public List<string>? Parents { get; internal init; }
+    public List<string>? Parents { get; }
 }
 

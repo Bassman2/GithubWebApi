@@ -15,4 +15,3 @@ internal class PullPatchModel
     public string? Base { get; set; }
 }
 
-// {"title":"new title","body":"updated body","state":"open","base":"master"}'

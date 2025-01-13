@@ -16,6 +16,4 @@ internal class TagModel
 
     [JsonPropertyName("node_id")]
     public string? NodeId { get; set; }
-
-   
 }

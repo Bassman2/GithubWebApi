@@ -15,6 +15,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Reference.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ReferenceObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RequiredStatusChecks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\GithubService.cs" />
@@ -26,7 +28,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\CommitModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\LinksModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ProtectionModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceObjectModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RefModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReleaseCreateModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReleaseModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RepositoryModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RequiredStatusChecksModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TagModel.cs" />

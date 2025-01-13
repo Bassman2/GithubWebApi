@@ -7,7 +7,7 @@ public class Branch
     internal Branch(BranchModel model)
     {
         this.Name = model.Name;
-        this.Commit = model.Commit.Facade<Commit>();
+        this.Commit = model.Commit.CastModel<Commit>();
         this.Links = model.Links is not null ? new Links(model.Links) : null;
         this.Protected = model.Protected;
         //this.Protection = model.Protection is not null ? new Protection(model.Protection) : null;
@@ -15,9 +15,7 @@ public class Branch
 
         
     }
-
     
-
     public string? Name { get; }
     public Commit? Commit { get; }
 

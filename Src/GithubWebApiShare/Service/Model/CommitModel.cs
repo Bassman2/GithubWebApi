@@ -27,7 +27,7 @@ internal class CommitModel
     [JsonPropertyName("committer")]
     public UserModel? Committer { get; set; }
 
-    [JsonPropertyName("parents")]
-    public List<string>? Parents { get; set; }
+    //[JsonPropertyName("parents")]
+    //public List<string>? Parents { get; set; }
 
 }
