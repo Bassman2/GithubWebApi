@@ -259,6 +259,18 @@ public sealed class Github : IDisposable
 
     #endregion
 
+    #region Trees
+
+    public async Task<Tree?> GetTreeAsync(string owner, string repo, string treeSha, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetTreeAsync(owner, repo, treeSha, cancellationToken);
+        return res.CastModel<Tree>();
+    }
+
+    #endregion
+
     #region User
 
     public async Task<User?> GetAuthenticatedUserAsync(CancellationToken cancellationToken = default)

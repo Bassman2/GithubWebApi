@@ -23,6 +23,10 @@
 [JsonSerializable(typeof(IEnumerable<ReferenceModel>))]
 [JsonSerializable(typeof(IEnumerable<RefModel>))]
 
+[JsonSerializable(typeof(TreeModel))]
+[JsonSerializable(typeof(TreeCreateModel))]
+
+
 [JsonSerializable(typeof(UserModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
