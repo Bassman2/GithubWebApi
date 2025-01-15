@@ -269,6 +269,23 @@ public sealed class Github : IDisposable
         return res.CastModel<Tree>();
     }
 
+    public async Task<Tree?> GetTreePathAsync(string owner, string repo, string treeSha, string path, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetTreeAsync(owner, repo, treeSha, cancellationToken);
+
+        var pathItems = path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+        foreach (var pathItem in pathItems)
+        {
+            var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
+            if (sha == null) return null;
+
+            res = await service.GetTreeAsync(owner, repo, sha, cancellationToken);
+        }
+        return res.CastModel<Tree>();
+    }
+
     #endregion
 
     #region User
