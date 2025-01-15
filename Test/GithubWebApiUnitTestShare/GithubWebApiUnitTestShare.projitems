@@ -12,6 +12,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)GithubBranchesUnitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GithubBaseUnitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GithubRepositoriesUnitTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubTagsUnitTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GithubTreesUnitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GithubUsersUnitTest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
   </ItemGroup>

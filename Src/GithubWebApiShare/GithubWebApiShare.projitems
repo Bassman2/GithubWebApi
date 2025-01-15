@@ -37,7 +37,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\RequiredStatusChecksModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TagModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TeamModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TreeCreateModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TreeItemModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\TreeModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\VerificationModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tag.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TreeItem.cs" />
     <Compile Include="..\GithubWebApiShare\Service\Model\PullCreateModel.cs" />
     <Compile Include="..\GithubWebApiShare\Service\Model\PullPatchModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\PullModel.cs" />
