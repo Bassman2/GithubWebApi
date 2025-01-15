@@ -2,8 +2,6 @@
 
 public sealed class Github : IDisposable
 {
-    private const string defAppName = "GithubWebApi";
-
     private GithubService? service;
 
     public Github(string storeKey, string appName)
@@ -77,8 +75,7 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
-        if(branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken) ?? throw new ArgumentException("Branch not found", nameof(branchName));
 
         //var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
         //string? sha = refs?.First(r => r.Ref?.Substring(r.Ref.LastIndexOf('/') + 1) == branch)?.Object!.Sha;
@@ -92,9 +89,7 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken);
-        if (branch == null) throw new ArgumentException("Branch not found", nameof(branchName));
-
+        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken) ?? throw new ArgumentException("Branch not found", nameof(branchName));
         await service.DeleteReferenceAsync(owner, repo, branch.Ref!, cancellationToken);
     }
     
