@@ -1,4 +1,4 @@
-﻿namespace GithubWebApiTest;
+﻿namespace GithubWebApiUnitTest;
 
 [TestClass]
 public partial class GithubBranchesUnitTest :  GithubBaseUnitTest

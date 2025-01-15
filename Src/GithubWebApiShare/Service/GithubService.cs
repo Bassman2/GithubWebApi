@@ -232,6 +232,7 @@ internal partial class GithubService : JsonService
 
 
     #endregion
+
     #region Repositories
 
     public IAsyncEnumerable<RepositoryModel> GetOrganizationRepositoriesAsync(string org, CancellationToken cancellationToken)
@@ -264,7 +265,6 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-
     public async Task<IEnumerable<TagModel>?> GetRepositoryTagsAsync(string org, string repo,CancellationToken cancellationToken)
     {
         var res = await GetFromJsonAsync<IEnumerable<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
@@ -279,13 +279,37 @@ internal partial class GithubService : JsonService
 
     #endregion
 
-    #region Tags
+    #region Tags /repos/{owner}/{repo}/git/tags
+
+    //public async Task<TagModel?> GetTagAsync(string owner, string repo, string tagSha, CancellationToken cancellationToken)
+    //{
+    //    var res = await GetFromJsonAsync<TagModel>($"/repos/{owner}/{repo}/git/tags/{tagSha}", cancellationToken);
+    //    return res;
+    //}
+
+    public async Task<TagModel?> GetTagAsync(string owner, string repo, string tagSha, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<TagModel>($"/repos/{owner}/{repo}/git/tags", cancellationToken);
+        return res;
+    }
 
     #endregion
 
     #region Tree
 
     // https://docs.github.com/en/rest/git/trees?apiVersion=2022-11-28
+
+    public async Task<TreeModel?> CreateTreeAsync(string owner, string repo, TreeCreateModel req, CancellationToken cancellationToken)
+    {
+        var res = await PostAsJsonAsync<TreeCreateModel, TreeModel>($"/repos/{owner}/{repo}/git/trees", req, cancellationToken);
+        return res;
+    }
+
+    public async Task<TreeModel?> GetTreeAsync(string owner, string repo, string treeSha, CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<TreeModel>($"/repos/{owner}/{repo}/git/trees/{treeSha}", cancellationToken);
+        return res;
+    }
 
     #endregion
 

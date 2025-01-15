@@ -202,6 +202,61 @@ public sealed class Github : IDisposable
         return res.CastModel<Repository>();  
     }
 
+
+
+    #endregion
+
+    #region Tags
+
+    public async Task<IEnumerable<Tag>?> GetRepositoryTagsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetRepositoryTagsAsync(owner, repo, cancellationToken);
+        return res.CastModel<Tag>();
+    }
+
+    public async Task<Tag?> GetTagAsync(string owner, string repo, string tag, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetTagAsync(owner, repo, tag, cancellationToken);
+        return res.CastModel<Tag>();
+    }
+
+
+
+    public async Task<IEnumerable<Reference>?> GetTagsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetTagReferencesAsync(owner, repo, cancellationToken);
+        return res.CastModel<Reference>();
+    }
+
+    //public async Task<Reference?> GetTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+    //    var res = await service.GetTagAsync(owner, repo, tagName, cancellationToken);
+    //    return res.CastModel<Reference>();
+    //}
+
+    //public async Task<Tag> CreateTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+    //    var res = service.GetTagReferenceAsync(owner, repo, tagName, cancellationToken);
+    //    return res.CastModel<Tag>();
+    //}
+
+    //public async Task DeleteTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+    //    service.DeleteReferenceAsync(owner, repo, tag.Ref, cancellationToken);
+    //}
+
     #endregion
 
     #region User

@@ -1,4 +1,4 @@
-﻿namespace GithubWebApiTest;
+﻿namespace GithubWebApiUnitTest;
 
 public abstract class GithubBaseUnitTest
 {
