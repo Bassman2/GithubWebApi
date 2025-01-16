@@ -257,10 +257,14 @@ public sealed class Github : IDisposable
     #region Trees
 
     public async Task<Tree?> GetTreeAsync(string owner, string repo, string treeSha, CancellationToken cancellationToken = default)
+         => await GetTreeAsync(owner, repo, treeSha, false, cancellationToken);
+    
+
+    public async Task<Tree?> GetTreeAsync(string owner, string repo, string treeSha, bool recursive, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetTreeAsync(owner, repo, treeSha, cancellationToken);
+        var res = await service.GetTreeAsync(owner, repo, treeSha, recursive, cancellationToken);
         return res.CastModel<Tree>();
     }
 
@@ -268,7 +272,7 @@ public sealed class Github : IDisposable
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetTreeAsync(owner, repo, treeSha, cancellationToken);
+        var res = await service.GetTreeAsync(owner, repo, treeSha, false, cancellationToken);
 
         var pathItems = path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
         foreach (var pathItem in pathItems)
@@ -276,7 +280,7 @@ public sealed class Github : IDisposable
             var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
             if (sha == null) return null;
 
-            res = await service.GetTreeAsync(owner, repo, sha, cancellationToken);
+            res = await service.GetTreeAsync(owner, repo, sha, false, cancellationToken);
         }
         return res.CastModel<Tree>();
     }

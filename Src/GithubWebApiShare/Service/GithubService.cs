@@ -307,9 +307,10 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    public async Task<TreeModel?> GetTreeAsync(string owner, string repo, string treeSha, CancellationToken cancellationToken)
+    public async Task<TreeModel?> GetTreeAsync(string owner, string repo, string treeSha, bool recursive, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<TreeModel>($"/repos/{owner}/{repo}/git/trees/{treeSha}", cancellationToken);
+        string req = CombineUrl($"/repos/{owner}/{repo}/git/trees/{treeSha}", ("recursive", recursive ? "1" : null));
+        var res = await GetFromJsonAsync<TreeModel>(req, cancellationToken);
         return res;
     }
 

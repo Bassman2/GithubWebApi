@@ -13,6 +13,7 @@ public partial class GithubTreesUnitTest : GithubBaseUnitTest
         Assert.IsNotNull(root);
         Assert.IsNotNull(root.Trees);
         var list = root.Trees.ToList();
+        Assert.AreEqual(4, list.Count, nameof(list.Count));
 
         var src = list.FirstOrDefault(t => t.Path == "Src");
         Assert.IsNotNull(src);
@@ -20,15 +21,22 @@ public partial class GithubTreesUnitTest : GithubBaseUnitTest
 
         var folder = await github.GetTreeAsync(testUser, testRepoFix, src.Sha);
         Assert.IsNotNull(folder);
+        Assert.IsNotNull(folder.Trees);
+        var folders = folder.Trees.ToList();
 
-        //var branch = list.Single(b => b.Name == "BranchA");
-        //Assert.IsNotNull(branch, nameof(branch));
+        Assert.AreEqual(3, folders.Count, nameof(folders.Count));
+    }
 
-        //Assert.AreEqual("BranchA", branch.Name, nameof(branch.Name));
-        //Assert.IsNotNull(branch.Commit, nameof(branch.Commit));
-        //Assert.IsNull(branch.Links, nameof(branch.Links));
-        //Assert.AreEqual(false, branch.Protected, nameof(branch.Protected));
-        //Assert.IsNull(branch.Protection, nameof(branch.Protection));
-        //Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/branches/BranchA/protection", branch.ProtectionUrl, nameof(branch.ProtectionUrl));
+    [TestMethod]
+    public async Task TestMethodGetTreeRecursiveAsync()
+    {
+        using var github = new Github(storeKey, appName);
+
+        var root = await github.GetTreeAsync(testUser, testRepoFix, "BranchA", true);
+
+        Assert.IsNotNull(root);
+        Assert.IsNotNull(root.Trees);
+        var list = root.Trees.ToList();
+        Assert.AreEqual(16, list.Count, nameof(list.Count));
     }
 }
