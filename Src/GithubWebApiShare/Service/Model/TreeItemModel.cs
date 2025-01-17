@@ -1,5 +1,6 @@
 ﻿namespace GithubWebApi.Service.Model;
 
+[DebuggerDisplay("{Type} {Path}")]
 internal class TreeItemModel
 {
     [JsonPropertyName("path")]

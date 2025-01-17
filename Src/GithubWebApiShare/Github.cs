@@ -268,21 +268,52 @@ public sealed class Github : IDisposable
         return res.CastModel<Tree>();
     }
 
+    //public async Task<Tree?> GetTreePathAsync(string owner, string repo, string treeSha, string path, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+    //    var res = await service.GetTreeAsync(owner, repo, treeSha, false, cancellationToken);
+
+    //    var pathItems = path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+    //    foreach (var pathItem in pathItems)
+    //    {
+    //        var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
+    //        if (sha == null) return null;
+
+    //        res = await service.GetTreeAsync(owner, repo, sha, false, cancellationToken);
+    //    }
+    //    return res.CastModel<Tree>();
+    //}
+
     public async Task<Tree?> GetTreePathAsync(string owner, string repo, string treeSha, string path, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);
 
-        var res = await service.GetTreeAsync(owner, repo, treeSha, false, cancellationToken);
-
-        var pathItems = path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
-        foreach (var pathItem in pathItems)
+        var res = await service.GetTreeAsync(owner, repo, treeSha, true, cancellationToken);
+        if (res == null) return null;
+        if (res.Truncated)
         {
-            var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
-            if (sha == null) return null;
+            // tree has more elements as GetTreeAsync can get, so step into path
+            var pathItems = path.Split(['/', '\\'], StringSplitOptions.RemoveEmptyEntries);
+            foreach (var pathItem in pathItems)
+            {
+                var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
+                if (sha == null) return null;
 
-            res = await service.GetTreeAsync(owner, repo, sha, false, cancellationToken);
+                res = await service.GetTreeAsync(owner, repo, sha, false, cancellationToken);
+            }
+            return res.CastModel<Tree>();
         }
-        return res.CastModel<Tree>();
+        else
+        {
+            var list = res?.Trees?.ToList();
+            path = path.Replace('\\', '/').Trim('/') + '/';
+            int pathLength = path.Length;
+            var items = res?.Trees?.Where(i => i.Path!.StartsWith(path)).ToList();
+            items?.ForEach(i => i.Path = i.Path?.Substring(pathLength));
+            res!.Trees = items;
+            return res.CastModel<Tree>();
+        }
     }
 
     #endregion
