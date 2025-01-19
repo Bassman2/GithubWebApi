@@ -1,4 +1,6 @@
-﻿namespace GithubWebApi;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace GithubWebApi;
 
 public sealed class Github : IDisposable
 {
@@ -198,6 +200,42 @@ public sealed class Github : IDisposable
     }
 
 
+
+    #endregion
+
+    #region Repository Contents
+
+    public async Task<Content?> GetRepositoryContentAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetRepositoryContentAsync(owner, repo, path, reference, cancellationToken);
+        return res.CastModel<Content>();
+    }
+
+    public async Task<string?> GetRepositoryContentStringAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetRepositoryContentStringAsync(owner, repo, path, reference, cancellationToken);
+        return res;
+    }
+
+    public async Task<ContentCommit?> CreateOrUpdateFileContentsAsync(string owner, string repo, string path, string message, string content, string? sha, string? branch, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.CreateOrUpdateFileContentsAsync(owner, repo, path, message, content, sha, branch, null, null, cancellationToken);
+        return res.CastModel<ContentCommit>();
+    }
+
+    public async Task<ContentCommit?> DeleteFileAsync(string owner, string repo, string path, string message, string? sha, string? branch,CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.DeleteFileAsync(owner, repo, path, message, sha, branch, null, null, cancellationToken);
+        return res.CastModel<ContentCommit>();
+    }
 
     #endregion
 

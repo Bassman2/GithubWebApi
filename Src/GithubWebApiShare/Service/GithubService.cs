@@ -290,6 +290,13 @@ internal partial class GithubService : JsonService
         return res;
     }
 
+    public async Task<string?> GetRepositoryContentStringAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken)
+    {
+        var req = CombineUrl($"/repos/{owner}/{repo}/contents/{path}", ("ref", reference));
+        var res = await GetFromJsonAsync<ContentModel>(req, cancellationToken);
+        return (res?.Type == "") ? Encoding.UTF8.GetString(Convert.FromBase64String(res?.Content!)) : await GetStringAsync(res!.DownloadUrl!, cancellationToken);
+    }
+
     public async Task<ContentCommitModel?> CreateOrUpdateFileContentsAsync(string owner, string repo, string path, string message, string content, string? sha, string? branch, UserModel? committer, UserModel? author, CancellationToken cancellationToken)
     {
         ContentCreateModel reqModel = new()

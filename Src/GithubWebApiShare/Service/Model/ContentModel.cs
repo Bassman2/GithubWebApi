@@ -9,7 +9,7 @@ internal class ContentModel
     public string? Encoding { get; set; }
 
     [JsonPropertyName("size")]
-    public long? size { get; set; }
+    public long? Size { get; set; }
 
     [JsonPropertyName("name")]
     public string? Name { get; set; }

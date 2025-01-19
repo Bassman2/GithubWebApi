@@ -11,6 +11,8 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Branch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Commit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Content.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContentCommit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protection.cs" />
