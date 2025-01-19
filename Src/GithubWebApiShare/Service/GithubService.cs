@@ -281,6 +281,48 @@ internal partial class GithubService : JsonService
 
     #endregion
 
+    #region Repository Contents
+
+    public async Task<ContentModel?> GetRepositoryContentAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken)
+    {
+        var req = CombineUrl($"/repos/{owner}/{repo}/contents/{path}", ("ref", reference));
+        var res = await GetFromJsonAsync<ContentModel>(req, cancellationToken);
+        return res;
+    }
+
+    public async Task<ContentCommitModel?> CreateOrUpdateFileContentsAsync(string owner, string repo, string path, string message, string content, string? sha, string? branch, UserModel? committer, UserModel? author, CancellationToken cancellationToken)
+    {
+        ContentCreateModel reqModel = new()
+        {
+            Message = message,
+            Content = Convert.ToBase64String(Encoding.UTF8.GetBytes(content)),
+            Sha = sha,
+            Branch = branch,
+            Committer = committer,
+            Author = author,
+        };
+        
+        var res = await PutAsJsonAsync<ContentCreateModel, ContentCommitModel>($"/repos/{owner}/{repo}/contents/{path}", reqModel, cancellationToken);
+        return res;
+    }
+
+    public async Task<ContentCommitModel?> DeleteFileAsync(string owner, string repo, string path, string message, string? sha, string? branch, UserModel? committer, UserModel? author, CancellationToken cancellationToken)
+    {
+        ContentCreateModel reqModel = new()
+        {
+            Message = message,
+            Sha = sha,
+            Branch = branch,
+            Committer = committer,
+            Author = author,
+        };
+
+        var res = await DeleteJsonAsync<ContentCreateModel, ContentCommitModel>($"/repos/{owner}/{repo}/contents/{path}", reqModel, cancellationToken);
+        return res;
+    }
+
+    #endregion
+
     #region Tags /repos/{owner}/{repo}/git/tags
 
     //public async Task<TagModel?> GetTagAsync(string owner, string repo, string tagSha, CancellationToken cancellationToken)
