@@ -1,8 +1,4 @@
-﻿using GithubWebApi.Service.Model;
-using Microsoft.VisualBasic.FileIO;
-using System.Threading;
-
-namespace GithubWebApi.Service;
+﻿namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
@@ -216,7 +212,7 @@ internal partial class GithubService : JsonService
 
     // https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28
 
-    public async Task<ReleaseModel?> CreateRelease(string owner, string repo, object tag, CancellationToken cancellationToken)
+    public async Task<ReleaseModel?> CreateReleaseAsync(string owner, string repo, object tag, CancellationToken cancellationToken)
     {
         var req = new ReleaseCreateModel()
         {

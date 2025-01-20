@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace GithubWebApi;
+﻿namespace GithubWebApi;
 
 public sealed class Github : IDisposable
 {
@@ -129,6 +127,18 @@ public sealed class Github : IDisposable
 
         var res = await service.UpdatePullAsync(owner, repo, pullNumber, title, body, state, baseBranch, cancellationToken);
         return res is not null ? new PullRequest(res) : null; 
+    }
+
+    #endregion
+
+    #region Release
+
+    public async Task<Release?> CreateReleaseAsync(string owner, string repo, object tag, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.CreateReleaseAsync(owner, repo, tag, cancellationToken);
+        return res.CastModel<Release>();
     }
 
     #endregion

@@ -19,6 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReferenceObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Release.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RequiredStatusChecks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\GithubService.cs" />
