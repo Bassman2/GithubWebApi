@@ -3,7 +3,7 @@
 [JsonSourceGenerationOptions]
 
 [JsonSerializable(typeof(BranchModel))]
-[JsonSerializable(typeof(IEnumerable<BranchModel>))]
+[JsonSerializable(typeof(List<BranchModel>))]
 
 [JsonSerializable(typeof(ProtectionModel))]
 [JsonSerializable(typeof(RequiredStatusChecksModel))]
@@ -18,10 +18,10 @@
 [JsonSerializable(typeof(PullPatchModel))]
 
 [JsonSerializable(typeof(RepositoryModel))]
-[JsonSerializable(typeof(IEnumerable<RepositoryModel>))]
+[JsonSerializable(typeof(List<RepositoryModel>))]
 
-[JsonSerializable(typeof(IEnumerable<ReferenceModel>))]
-[JsonSerializable(typeof(IEnumerable<RefModel>))]
+[JsonSerializable(typeof(List<ReferenceModel>))]
+[JsonSerializable(typeof(List<RefModel>))]
 
 [JsonSerializable(typeof(TreeModel))]
 [JsonSerializable(typeof(TreeCreateModel))]

@@ -1,8 +1,4 @@
-﻿using GithubWebApi.Service.Model;
-using Microsoft.VisualBasic.FileIO;
-using System.Threading;
-
-namespace GithubWebApi.Service;
+﻿namespace GithubWebApi.Service;
 
 // https://docs.github.com/en/rest/pulls/pulls?apiVersion=2022-11-28
 
@@ -10,7 +6,7 @@ namespace GithubWebApi.Service;
 
 internal partial class GithubService : JsonService
 {
-    private const string defHost = "https://api.github.com";
+    //private const string defHost = "https://api.github.com";
 
     protected override string? AuthenticationTestUrl => "/user";
 

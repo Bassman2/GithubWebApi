@@ -15,7 +15,7 @@ public class Tree
 
     public string? Url { get; }
 
-    public IEnumerable<TreeItem>? Trees { get; }
+    public List<TreeItem>? Trees { get; }
 
     public bool Truncated { get; }
 }
