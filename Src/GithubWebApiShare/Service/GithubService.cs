@@ -99,9 +99,9 @@ internal partial class GithubService : JsonService
 
     #region Codespaces
 
-    public async Task<IEnumerable<BranchModel>?> GetCodespacesAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<List<BranchModel>?> GetCodespacesAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<BranchModel>>($"/repos/{owner}/{repo}/codespaces", cancellationToken);
+        var res = await GetFromJsonAsync<List<BranchModel>>($"/repos/{owner}/{repo}/codespaces", cancellationToken);
         return res;
     }
 
@@ -109,9 +109,9 @@ internal partial class GithubService : JsonService
     
     #region PullRequest
 
-    public async Task<IEnumerable<PullModel>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<List<PullModel>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<PullModel>>($"/repos/{owner}/{repo}/pulls", cancellationToken);
+        var res = await GetFromJsonAsync<List<PullModel>>($"/repos/{owner}/{repo}/pulls", cancellationToken);
         return res;
     }
 
@@ -161,21 +161,21 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    public async Task<IEnumerable<ReferenceModel>?> GetReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<List<ReferenceModel>?> GetReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs", cancellationToken);
+        var res = await GetFromJsonAsync<List<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs", cancellationToken);
         return res;
     }
 
-    public async Task<IEnumerable<ReferenceModel>?> GetHeadReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<List<ReferenceModel>?> GetHeadReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+        var res = await GetFromJsonAsync<List<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
         return res;
     }
 
-    public async Task<IEnumerable<ReferenceModel>?> GetTagReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
+    public async Task<List<ReferenceModel>?> GetTagReferencesAsync(string owner, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/tags", cancellationToken);
+        var res = await GetFromJsonAsync<List<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/tags", cancellationToken);
         return res;
     }
 
@@ -263,15 +263,15 @@ internal partial class GithubService : JsonService
         return res;
     }
 
-    public async Task<IEnumerable<TagModel>?> GetRepositoryTagsAsync(string org, string repo,CancellationToken cancellationToken)
+    public async Task<List<TagModel>?> GetRepositoryTagsAsync(string org, string repo,CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
+        var res = await GetFromJsonAsync<List<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
         return res;
     }
 
-    public async Task<IEnumerable<TeamModel>?> GetRepositoryTeamsAsync(string org, string repo, CancellationToken cancellationToken)
+    public async Task<List<TeamModel>?> GetRepositoryTeamsAsync(string org, string repo, CancellationToken cancellationToken)
     {
-        var res = await GetFromJsonAsync<IEnumerable<TeamModel>>($"/repos/{org}/{repo}/teams", cancellationToken);
+        var res = await GetFromJsonAsync<List<TeamModel>>($"/repos/{org}/{repo}/teams", cancellationToken);
         return res;
     }
 
@@ -413,7 +413,7 @@ internal partial class GithubService : JsonService
                 await ErrorHandlingAsync(response, memberName, cancellationToken);
             }
 
-            var res = await ReadFromJsonAsync<IEnumerable<T>?>(response, cancellationToken);
+            var res = await ReadFromJsonAsync<List<T>?>(response, cancellationToken);
             if (res != null)
             {
                 foreach (var item in res)
