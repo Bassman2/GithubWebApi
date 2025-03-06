@@ -6,7 +6,7 @@ internal class TreeCreateModel
     public string? BaseTree { get; set; }
 
     [JsonPropertyName("tree")]
-    public IEnumerable<TreeItemModel>? Tree { get; set; }
+    public List<TreeItemModel>? Tree { get; set; }
 }
 
 /*

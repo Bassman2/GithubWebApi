@@ -10,7 +10,7 @@ internal class TreeModel
     public string? Url { get; set; }
 
     [JsonPropertyName("tree")]
-    public IEnumerable<TreeItemModel>? Trees { get; set; }
+    public List<TreeItemModel>? Trees { get; set; }
 
     [JsonPropertyName("truncated")]
     public bool Truncated { get; set; }
