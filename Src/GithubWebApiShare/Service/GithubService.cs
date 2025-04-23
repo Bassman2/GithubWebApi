@@ -413,7 +413,12 @@ internal partial class GithubService : JsonService
                 await ErrorHandlingAsync(response, memberName, cancellationToken);
             }
 
-            var res = await ReadFromJsonAsync<List<T>?>(response, cancellationToken);
+            //var res = await ReadFromJsonAsync<List<T>?>(response, cancellationToken);
+
+            JsonTypeInfo<List<T>?> jsonTypeInfoOut = (JsonTypeInfo<List<T>?>)context.GetTypeInfo(typeof(List<T>))!;
+            var res = await response.Content.ReadFromJsonAsync<List<T>?>(jsonTypeInfoOut, cancellationToken);
+
+
             if (res != null)
             {
                 foreach (var item in res)
