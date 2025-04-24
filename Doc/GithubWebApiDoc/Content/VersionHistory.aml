@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="5d1e5e4a-f1d9-4456-bc25-34db0d3c3cd0" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+			<para>The topics in this section describe the various changes made to the GithubWebApi over the
+life of the project.</para>
+		</introduction>
+
+		<section>
+			<title>Version 0.1 was released on April 24th, 2025.</title>
+			<content>
+				<list class="bullet">
+					<listItem>
+						<para>Creation</para>
+					</listItem>
+				</list>
+			</content>
+		</section>
+
+		<relatedTopics>
+			<link xlink:href="97a3f3b0-a298-46aa-9fd3-a49951de5482" />
+		</relatedTopics>
+
+	</developerConceptualDocument>
+</topic>

@@ -6,7 +6,8 @@
     <Nullable>enable</Nullable>
     <AssemblyName>GithubWebApi</AssemblyName>
     <RootNamespace>GithubWebApi</RootNamespace>
-    <Version>0.0.1.0</Version>
+    <Version>0.1.0.0</Version>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

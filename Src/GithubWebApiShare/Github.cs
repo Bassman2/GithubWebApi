@@ -150,6 +150,7 @@ public sealed class Github : IDisposable
     /// <param name="repo">The name of the repository.</param>
     /// <param name="branchName">The name of the branch to delete.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task DeleteBranchAsync(string owner, string repo, string branchName, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNullOrNotConnected(this.service);

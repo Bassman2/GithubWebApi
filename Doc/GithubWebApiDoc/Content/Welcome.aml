@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="97a3f3b0-a298-46aa-9fd3-a49951de5482" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+			<para>GithubWebApi is a .NET API for the Github web service.</para>
+		</introduction>
+
+		<section>
+			<title>Getting Started</title>
+			<content>
+				<para>To get started, add the GithubWebApi package to your project.</para>
+				<para>The followin example code shows how to read alle branches.</para>
+				<code language="c#">
+					using GithubWebApi;
+					...
+					using (Github client = new Github(host, token, appName))
+					{
+						var branchesyList = client.GetBranchesAsync("owner", "repo");
+					}
+				</code>				
+			</content>
+		</section>
+
+		<relatedTopics>
+			<link xlink:href="5d1e5e4a-f1d9-4456-bc25-34db0d3c3cd0" />
+		</relatedTopics>
+	</developerConceptualDocument>
+</topic>
