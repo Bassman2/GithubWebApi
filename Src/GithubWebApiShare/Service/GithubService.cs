@@ -387,6 +387,11 @@ internal partial class GithubService : JsonService
     #endregion
 
 
+    public async Task<MetaModel?> GetMetaAsync(CancellationToken cancellationToken)
+    {
+        var res = await GetFromJsonAsync<MetaModel>($"/meta", cancellationToken);
+        return res;
+    }
 
     public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken)
     {

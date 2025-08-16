@@ -4,7 +4,7 @@ public abstract class GithubBaseUnitTest
 {
     protected static readonly CultureInfo culture = new CultureInfo("en-US");
 
-    protected const string storeKey = "github";
+    protected const string storeKey = "gitext";
 
     protected const string appName = "UnitTest";
 

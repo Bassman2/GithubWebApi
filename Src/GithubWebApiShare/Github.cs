@@ -636,4 +636,17 @@ public sealed class Github : IDisposable
     }
 
     #endregion
+
+    /// <summary>
+    /// Retrieves GitHub API metadata for the authenticated user or application.
+    /// </summary>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A string containing the metadata information, or <c>null</c> if not available.</returns>
+    public async Task<Meta?> GetMetaAsync(CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+
+        var res = await service.GetMetaAsync(cancellationToken);
+        return res.CastModel<Meta>();
+    }
 }

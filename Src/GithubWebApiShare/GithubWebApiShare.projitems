@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ContentCommit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Meta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reference.cs" />
@@ -33,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ContentCreateModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ContentModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\LinksModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Service\Model\MetaModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ProtectionModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Service\Model\ReferenceObjectModel.cs" />

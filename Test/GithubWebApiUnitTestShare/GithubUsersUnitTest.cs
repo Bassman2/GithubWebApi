@@ -68,4 +68,15 @@ public partial class GithubUsersUnitTest : GithubBaseUnitTest
         Assert.AreEqual(null, user.Email, nameof(user.Email));
     }
 
+    [TestMethod]
+    public async Task TestMethodGetMetaAsync()
+    {
+        using var github = new Github(storeKey, appName);
+
+        var meta = await github.GetMetaAsync();
+
+        Assert.IsNotNull(meta);
+        Assert.AreEqual("3.14.11", meta.InstalledVersion);
+
+    }
 }

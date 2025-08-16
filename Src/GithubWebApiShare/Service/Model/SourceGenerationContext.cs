@@ -30,6 +30,9 @@
 
 
 [JsonSerializable(typeof(UserModel))]
+
+[JsonSerializable(typeof(MetaModel))]
+
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
 }
