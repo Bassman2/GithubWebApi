@@ -11,5 +11,4 @@ global using WebServiceClient;
 global using WebServiceClient.Authenticator;
 global using WebServiceClient.Store;
 
-global using GithubWebApi.Service;
-global using GithubWebApi.Service.Model;
+global using GithubWebApi.Model;

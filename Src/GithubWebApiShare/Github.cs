@@ -3,50 +3,65 @@
 /// <summary>
 /// Provides methods to interact with GitHub's API, including operations for branches, pull requests, repositories, and more.
 /// </summary>
-public sealed class Github : IDisposable
+public sealed partial class Github: JsonService
 {
-    private GithubService? service;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Github"/> class using a store key and application name.
     /// </summary>
-    /// <param name="storeKey">The key to retrieve GitHub credentials from the key store.</param>
-    /// <param name="appName">The name of the application.</param>
-    public Github(string storeKey, string appName)
-        : this(new Uri(KeyStore.Key(storeKey)?.Host!), KeyStore.Key(storeKey)!.Token!, appName)
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Github"/> class using a host URI, token, and application name.
-    /// </summary>
-    /// <param name="host">The GitHub API host URI.</param>
-    /// <param name="token">The authentication token.</param>
-    /// <param name="appName">The name of the application.</param>
-    public Github(Uri host, string token, string appName)
+    /// <param name="storeKey">The key used to store authentication or configuration data.</param>
+    /// <param name="appName">The name of the application using the GitHub API.</param>
+    public Github(string storeKey, string appName) : base(storeKey, appName, SourceGenerationContext.Default)
     {
-        service = new GithubService(host, new BearerAuthenticator(token), appName);
+        client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+        client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
 
     /// <summary>
-    /// Releases the resources used by the <see cref="Github"/> instance.
+    /// Initializes a new instance of the <see cref="Github"/> class using a host URI, an optional authenticator, and an application name.
     /// </summary>
-    public void Dispose()
+    /// <param name="host">The base URI of the GitHub API host.</param>
+    /// <param name="authenticator">The authenticator used for API authentication, or <c>null</c> for unauthenticated access.</param>
+    /// <param name="appName">The name of the application using the GitHub API.</param>
+    public Github(Uri host, IAuthenticator? authenticator, string appName) : base(host, authenticator, appName, SourceGenerationContext.Default)
     {
-        if (this.service != null)
-        {
-            this.service.Dispose();
-            this.service = null;
-        }
-        GC.SuppressFinalize(this);
+        client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+        client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
+
+    /// <summary>
+    /// Gets the relative URL used to test authentication with the GitHub API.
+    /// </summary>
+    protected override string? AuthenticationTestUrl => "/user";
+
+    //protected override async Task ErrorHandlingAsync(HttpResponseMessage response, string memberName, CancellationToken cancellationToken)
+    //{
+    //    var error = await ReadFromJsonAsync<ErrorRoot>(response, cancellationToken);
+    //    WebServiceException.ThrowHttpError(error?.ToString(), response, memberName);
+    //}
 
     //public async Task<BranchModel?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken = default)
     //{
-    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //    WebServiceException.ThrowIfNotConnected(client);
 
     //    var res = await service.GetHeadRevisionAsync(owner, repo, cancellationToken);
     //    return res; //?.Select(p => new PullRequest(p)).ToList();
     //}
+
+    /// <summary>
+    /// Retrieves the version string of the GitHub API for the authenticated user or application.
+    /// </summary>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A string containing the version information, or <c>null</c> if not available.</returns>
+    public override async Task<string?> GetVersionStringAsync(CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var res = await GetFromJsonAsync<MetaModel>($"/meta", cancellationToken);
+        return res?.InstalledVersion ?? "Error";
+    }
+
 
     #region Branches
 
@@ -59,9 +74,9 @@ public sealed class Github : IDisposable
     /// <returns>An asynchronous stream of <see cref="Branch"/> objects.</returns>
     public async IAsyncEnumerable<Branch> GetBranchesAsync(string owner, string repo, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = service.GetBranchesAsync(owner, repo, cancellationToken);
+        var res = GetFromJsonYieldAsync<BranchModel>($"/repos/{owner}/{repo}/branches", cancellationToken);
         await foreach (var item in res)
         {
             yield return new Branch(item);
@@ -78,9 +93,9 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Branch"/> object if found; otherwise, <c>null</c>.</returns>
     public async Task<Branch?> GetBranchAsync(string owner, string repo, string branch, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetBranchAsync(owner, repo, branch, cancellationToken);
+        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/branches/{branch}", cancellationToken);
         return res is not null ? new Branch(res) : null;
     }
 
@@ -95,9 +110,10 @@ public sealed class Github : IDisposable
     /// <returns>The updated <see cref="Branch"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<Branch?> RenameBranchAsync(string owner, string repo, string branch, string newName, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
-                
-        var res = await service.RenameBranchAsync(owner, repo, branch, newName, cancellationToken);
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var req = new BranchRenameModel() { NewName = newName };
+        var res = await PostAsJsonAsync<BranchRenameModel, BranchModel>($"/repos/{owner}/{repo}/branches/{branch}/rename", req, cancellationToken);
         return res is not null ? new Branch(res) : null;
     }
 
@@ -111,12 +127,22 @@ public sealed class Github : IDisposable
     /// <returns>The created <see cref="Reference"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<Reference?> CreateBranchAsync(string owner, string repo, string newBranchName, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
+        // GetHeadReferencesAsync
+        var refs = await GetFromJsonAsync<List<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+
         string sha = refs!.Last().Object!.Sha!;
 
-        var res = await service.CreateHeadReferenceAsync(owner, repo, sha, newBranchName, cancellationToken);
+        // var res = await service.CreateHeadReferenceAsync(owner, repo, sha, newBranchName, cancellationToken);
+        var req = new RefModel()
+        {
+            Ref = $"refs/heads/{newBranchName}",
+            Sha = sha
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
+
+
         return res.CastModel<Reference>();
     }
 
@@ -131,15 +157,24 @@ public sealed class Github : IDisposable
     /// <returns>The created <see cref="Reference"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<Reference?> CreateBranchAsync(string owner, string repo, string branchName, string newBranchName, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken) ?? throw new ArgumentException("Branch not found", nameof(branchName));
+        // GetHeadReferenceAsync
+        var branch = await GetFromJsonAsync<ReferenceModel>($"/repos/{owner}/{repo}/git/ref/heads/{branchName}", cancellationToken);
 
         //var refs = await service.GetHeadReferencesAsync(owner, repo, cancellationToken);
         //string? sha = refs?.First(r => r.Ref?.Substring(r.Ref.LastIndexOf('/') + 1) == branch)?.Object!.Sha;
         //if (sha == null) throw new ArgumentException(branch, nameof(branch));
 
-        var res = await service.CreateHeadReferenceAsync(owner, repo, branch.Object!.Sha!, newBranchName, cancellationToken);
+        //var res = await service.CreateHeadReferenceAsync(owner, repo, branch.Object!.Sha!, newBranchName, cancellationToken);
+
+        var req = new RefModel()
+        {
+            Ref = $"refs/heads/{newBranchName}",
+            Sha = branch!.Object!.Sha!
+        };
+        var res = await PostAsJsonAsync<RefModel, ReferenceModel>($"/repos/{owner}/{repo}/git/refs", req, cancellationToken);
+
         return res.CastModel<Reference>();
     }
 
@@ -153,11 +188,30 @@ public sealed class Github : IDisposable
     /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task DeleteBranchAsync(string owner, string repo, string branchName, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var branch = await service.GetHeadReferenceAsync(owner, repo, branchName, cancellationToken) ?? throw new ArgumentException("Branch not found", nameof(branchName));
-        await service.DeleteReferenceAsync(owner, repo, branch.Ref!, cancellationToken);
+        var branch = await GetFromJsonAsync<ReferenceModel>($"/repos/{owner}/{repo}/git/ref/heads/{branchName}", cancellationToken);
+        //await service.DeleteReferenceAsync(owner, repo, branch.Ref!, cancellationToken);
+
+        await DeleteAsync($"/repos/{owner}/{repo}/git/{branch!.Ref!}", cancellationToken);
+
     }
+
+    /// <summary>
+    /// Retrieves a list of codespaces for the specified repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A list of <see cref="Branch"/> objects representing the codespaces, or <c>null</c> if none are found.</returns>
+    public async Task<List<Branch>?> GetCodespacesAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var res = await GetFromJsonAsync<List<BranchModel>>($"/repos/{owner}/{repo}/codespaces", cancellationToken);
+        return res.CastModel<Branch>();
+    }
+
 
     #endregion
 
@@ -172,9 +226,9 @@ public sealed class Github : IDisposable
     /// <returns>A collection of <see cref="PullRequest"/> objects if found; otherwise, <c>null</c>.</returns>
     public async Task<IEnumerable<PullRequest>?> GetPullsAsync(string owner, string repo, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetPullsAsync(owner, repo, cancellationToken);
+        var res = await GetFromJsonAsync<List<PullModel>>($"/repos/{owner}/{repo}/pulls", cancellationToken);
         return res?.Select(p => new PullRequest(p)).ToList();
     }
 
@@ -191,9 +245,10 @@ public sealed class Github : IDisposable
     /// <returns>The created <see cref="PullRequest"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<PullRequest?> CreatePullAsync(string owner, string repo, string title, string body, string head, string baseBranch, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.CreatePullAsync(owner, repo, title, body, head, baseBranch, cancellationToken);
+        var req = new PullCreateModel() { Title = title, Body = body, Head = head, Base = baseBranch };
+        var res = await PostAsJsonAsync<PullCreateModel, PullModel>($"/repos/{owner}/{repo}/pulls", req, cancellationToken);
         return res is not null ? new PullRequest(res) : null;
     }
 
@@ -207,9 +262,9 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="PullRequest"/> object if found; otherwise, <c>null</c>.</returns>
     public async Task<PullRequest?> GetPullAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetPullAsync(owner, repo, pullNumber, cancellationToken);
+        var res = await GetFromJsonAsync<PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", cancellationToken);
         return res is not null ? new PullRequest(res) : null;
     }
 
@@ -227,11 +282,19 @@ public sealed class Github : IDisposable
     /// <returns>The updated <see cref="PullRequest"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<PullRequest?> UpdatePullAsync(string owner, string repo, int pullNumber, string title, string body, string state, string baseBranch, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.UpdatePullAsync(owner, repo, pullNumber, title, body, state, baseBranch, cancellationToken);
+        var req = new PullPatchModel() { Title = title, Body = body, State = state, Base = baseBranch };
+        var res = await PatchAsJsonAsync<PullPatchModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
         return res is not null ? new PullRequest(res) : null;
     }
+
+    //public async Task<PullModel?> UpdatePullBranchAsync(string owner, string repo, int pullNumber, CancellationToken cancellationToken)
+    //{
+    //    var req = new PullPatchModel() { };
+    //    var res = await PatchAsJsonAsync<PullPatchModel, PullModel>($"/repos/{owner}/{repo}/pulls/{pullNumber}", req, cancellationToken);
+    //    return res;
+    //}
 
     #endregion
 
@@ -247,9 +310,19 @@ public sealed class Github : IDisposable
     /// <returns>The created <see cref="Release"/> object if successful; otherwise, <c>null</c>.</returns>
     public async Task<Release?> CreateReleaseAsync(string owner, string repo, object tag, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.CreateReleaseAsync(owner, repo, tag, cancellationToken);
+        var req = new ReleaseCreateModel()
+        {
+            TagName = "v1.0.0",
+            TargetCommitish = "master",
+            Name = "v1.0.0",
+            Body = "Description of the release",
+            Draft = false,
+            Prerelease = false,
+            GenerateReleaseNotes = false
+        }; //
+        var res = await PostAsJsonAsync<ReleaseCreateModel, ReleaseModel>($"/repos/{owner}/{repo}/releases", req, cancellationToken);
         return res.CastModel<Release>();
     }
 
@@ -265,9 +338,9 @@ public sealed class Github : IDisposable
     /// <returns>An asynchronous stream of <see cref="Repository"/> objects.</returns>
     public async IAsyncEnumerable<Repository> GetOrganizationRepositoriesAsync(string org, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = service.GetOrganizationRepositoriesAsync(org, cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/orgs/{org}/repos", cancellationToken);
         if (res is not null)
         {
             await foreach (var item in res)
@@ -284,9 +357,9 @@ public sealed class Github : IDisposable
     /// <returns>An asynchronous stream of <see cref="Repository"/> objects.</returns>
     public async IAsyncEnumerable<Repository> GetAuthenticatedUserRepositoriesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = service.GetAuthenticatedUserRepositoriesAsync(cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/user/repos", cancellationToken);
         if (res is not null)
         {
             await foreach (var item in res)
@@ -304,9 +377,9 @@ public sealed class Github : IDisposable
     /// <returns>An asynchronous stream of <see cref="Repository"/> objects.</returns>
     public async IAsyncEnumerable<Repository> GetUserRepositoriesAsync(string user, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = service.GetUserRepositoriesAsync(user, cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/users/{user}/repos", cancellationToken);
         if (res is not null)
         {
             await foreach (var item in res)
@@ -324,9 +397,9 @@ public sealed class Github : IDisposable
     /// <returns>An asynchronous stream of <see cref="Repository"/> objects.</returns>
     public async IAsyncEnumerable<Repository> GetPublicRepositoriesAsync(int since, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = service.GetPublicRepositoriesAsync(since, cancellationToken);
+        var res = GetFromJsonYieldAsync<RepositoryModel>($"/repositories?since={since}", cancellationToken);
         if (res is not null)
         {
             await foreach (var item in res)
@@ -345,14 +418,26 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Repository"/> object if found; otherwise, <c>null</c>.</returns>
     public async Task<Repository?> GetRepositoryAsync(string owner, string repo, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetRepositoryAsync(owner, repo, cancellationToken);
+        var res = await GetFromJsonAsync<RepositoryModel>($"/repos/{owner}/{repo}", cancellationToken);
         return res.CastModel<Repository>();
     }
 
+    //public async Task<List<TagModel>?> GetRepositoryTagsAsync(string org, string repo, CancellationToken cancellationToken)
+    //{
+    //    var res = await GetFromJsonAsync<List<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
+    //    return res;
+    //}
+
+    //public async Task<List<TeamModel>?> GetRepositoryTeamsAsync(string org, string repo, CancellationToken cancellationToken)
+    //{
+    //    var res = await GetFromJsonAsync<List<TeamModel>>($"/repos/{org}/{repo}/teams", cancellationToken);
+    //    return res;
+    //}
+
     #endregion
-    
+
     #region Repository Contents
 
     /// <summary>
@@ -366,9 +451,10 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Content"/> object representing the file or directory content, or <c>null</c> if not found.</returns>
     public async Task<Content?> GetRepositoryContentAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetRepositoryContentAsync(owner, repo, path, reference, cancellationToken);
+        var req = CombineUrl($"/repos/{owner}/{repo}/contents/{path}", ("ref", reference));
+        var res = await GetFromJsonAsync<ContentModel>(req, cancellationToken);
         return res.CastModel<Content>();
     }
 
@@ -383,10 +469,11 @@ public sealed class Github : IDisposable
     /// <returns>The content of the file as a string, or <c>null</c> if not found.</returns>
     public async Task<string?> GetRepositoryContentStringAsync(string owner, string repo, string path, string? reference, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetRepositoryContentStringAsync(owner, repo, path, reference, cancellationToken);
-        return res;
+        var req = CombineUrl($"/repos/{owner}/{repo}/contents/{path}", ("ref", reference));
+        var res = await GetFromJsonAsync<ContentModel>(req, cancellationToken);
+        return (res?.Type == "") ? Encoding.UTF8.GetString(Convert.FromBase64String(res?.Content!)) : await GetStringAsync(res!.DownloadUrl!, cancellationToken);
     }
 
     /// <summary>
@@ -403,9 +490,18 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="ContentCommit"/> object representing the commit details, or <c>null</c> if the operation fails.</returns>
     public async Task<ContentCommit?> CreateOrUpdateFileContentsAsync(string owner, string repo, string path, string message, string content, string? sha, string? branch, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.CreateOrUpdateFileContentsAsync(owner, repo, path, message, content, sha, branch, null, null, cancellationToken);
+        ContentCreateModel reqModel = new()
+        {
+            Message = message,
+            Content = Convert.ToBase64String(Encoding.UTF8.GetBytes(content)),
+            Sha = sha,
+            Branch = branch,
+            Committer = null,
+            Author = null,
+        };
+        var res = await PutAsJsonAsync<ContentCreateModel, ContentCommitModel>($"/repos/{owner}/{repo}/contents/{path}", reqModel, cancellationToken);
         return res.CastModel<ContentCommit>();
     }
 
@@ -422,9 +518,18 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="ContentCommit"/> object representing the commit details, or <c>null</c> if the operation fails.</returns>
     public async Task<ContentCommit?> DeleteFileAsync(string owner, string repo, string path, string message, string? sha, string? branch, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.DeleteFileAsync(owner, repo, path, message, sha, branch, null, null, cancellationToken);
+        ContentCreateModel reqModel = new()
+        {
+            Message = message,
+            Sha = sha,
+            Branch = branch,
+            Committer = null,
+            Author = null
+        };
+
+        var res = await DeleteJsonAsync<ContentCreateModel, ContentCommitModel>($"/repos/{owner}/{repo}/contents/{path}", reqModel, cancellationToken);
         return res.CastModel<ContentCommit>();
     }
 
@@ -435,15 +540,15 @@ public sealed class Github : IDisposable
     /// <summary>
     /// Retrieves all tags for a specified repository.
     /// </summary>
-    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="org">The organisation of the repository.</param>
     /// <param name="repo">The name of the repository.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A collection of <see cref="Tag"/> objects if found; otherwise, <c>null</c>.</returns>
-    public async Task<IEnumerable<Tag>?> GetRepositoryTagsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Tag>?> GetRepositoryTagsAsync(string org, string repo, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetRepositoryTagsAsync(owner, repo, cancellationToken);
+        var res = await GetFromJsonAsync<List<TagModel>>($"/repos/{org}/{repo}/tags", cancellationToken);
         return res.CastModel<Tag>();
     }
 
@@ -457,9 +562,9 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Tag"/> object if found; otherwise, <c>null</c>.</returns>
     public async Task<Tag?> GetTagAsync(string owner, string repo, string tag, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetTagAsync(owner, repo, tag, cancellationToken);
+        var res = await GetFromJsonAsync<TagModel>($"/repos/{owner}/{repo}/git/tags", cancellationToken);
         return res.CastModel<Tag>();
     }
 
@@ -472,15 +577,15 @@ public sealed class Github : IDisposable
     /// <returns>A collection of <see cref="Reference"/> objects representing tag references if found; otherwise, <c>null</c>.</returns>
     public async Task<IEnumerable<Reference>?> GetTagsAsync(string owner, string repo, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetTagReferencesAsync(owner, repo, cancellationToken);
+        var res = await GetFromJsonAsync<List<ReferenceModel>?>($"/repos/{owner}/{repo}/git/refs/tags", cancellationToken);
         return res.CastModel<Reference>();
     }
 
     //public async Task<Reference?> GetTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
     //{
-    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //    WebServiceException.ThrowIfNotConnected(client);
 
     //    var res = await service.GetTagAsync(owner, repo, tagName, cancellationToken);
     //    return res.CastModel<Reference>();
@@ -488,7 +593,7 @@ public sealed class Github : IDisposable
 
     //public async Task<Tag> CreateTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
     //{
-    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //    WebServiceException.ThrowIfNotConnected(client);
 
     //    var res = service.GetTagReferenceAsync(owner, repo, tagName, cancellationToken);
     //    return res.CastModel<Tag>();
@@ -496,7 +601,7 @@ public sealed class Github : IDisposable
 
     //public async Task DeleteTagAsync(string owner, string repo, string tagName, CancellationToken cancellationToken = default)
     //{
-    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //    WebServiceException.ThrowIfNotConnected(client);
 
     //    service.DeleteReferenceAsync(owner, repo, tag.Ref, cancellationToken);
     //}
@@ -527,15 +632,16 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Tree"/> object if found; otherwise, <c>null</c>.</returns>
     public async Task<Tree?> GetTreeAsync(string owner, string repo, string treeSha, bool recursive, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetTreeAsync(owner, repo, treeSha, recursive, cancellationToken);
+        string req = CombineUrl($"/repos/{owner}/{repo}/git/trees/{treeSha}", ("recursive", recursive ? "1" : null));
+        var res = await GetFromJsonAsync<TreeModel>(req, cancellationToken);
         return res.CastModel<Tree>();
     }
 
     //public async Task<Tree?> GetTreePathAsync(string owner, string repo, string treeSha, string path, CancellationToken cancellationToken = default)
     //{
-    //    WebServiceException.ThrowIfNullOrNotConnected(this.service);
+    //    WebServiceException.ThrowIfNotConnected(client);
 
     //    var res = await service.GetTreeAsync(owner, repo, treeSha, false, cancellationToken);
 
@@ -561,9 +667,10 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="Tree"/> object representing the specified path if found; otherwise, <c>null</c>.</returns>
     public async Task<Tree?> GetTreePathAsync(string owner, string repo, string treeSha, string path, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetTreeAsync(owner, repo, treeSha, true, cancellationToken);
+        string req = CombineUrl($"/repos/{owner}/{repo}/git/trees/{treeSha}");
+        var res = await GetFromJsonAsync<TreeModel>(req, cancellationToken);
         if (res == null) return null;
         if (res.Truncated)
         {
@@ -574,7 +681,8 @@ public sealed class Github : IDisposable
                 var sha = res?.Trees?.FirstOrDefault(t => string.Equals(t.Path, pathItem, StringComparison.OrdinalIgnoreCase))?.Sha;
                 if (sha == null) return null;
 
-                res = await service.GetTreeAsync(owner, repo, sha, false, cancellationToken);
+                string reqx = CombineUrl($"/repos/{owner}/{repo}/git/trees/{treeSha}");
+                var resx = await GetFromJsonAsync<TreeModel>(reqx, cancellationToken);
             }
             return res.CastModel<Tree>();
         }
@@ -584,7 +692,7 @@ public sealed class Github : IDisposable
             path = path.Replace('\\', '/').Trim('/') + '/';
             int pathLength = path.Length;
             var items = res?.Trees?.Where(i => i.Path!.StartsWith(path)).ToList();
-            items?.ForEach(i => i.Path = i.Path?.Substring(pathLength));
+            items?.ForEach(i => i.Path = i.Path?[pathLength..]);
             res!.Trees = items;
             return res.CastModel<Tree>();
         }
@@ -601,9 +709,9 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="User"/> object representing the authenticated user, or <c>null</c> if not found.</returns>
     public async Task<User?> GetAuthenticatedUserAsync(CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetAuthenticatedUserAsync(cancellationToken);
+        var res = await GetFromJsonAsync<UserModel>("/user", cancellationToken);
         return res.CastModel<User>(); 
     }
 
@@ -615,9 +723,9 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="User"/> object representing the user, or <c>null</c> if not found.</returns>
     public async Task<User?> GetUserAsync(string username, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetUserAsync(username, cancellationToken);
+        var res = await GetFromJsonAsync<UserModel>($"/users/{username}", cancellationToken);
         return res.CastModel<User>();
     }
 
@@ -629,11 +737,65 @@ public sealed class Github : IDisposable
     /// <returns>The <see cref="User"/> object representing the user, or <c>null</c> if not found.</returns>
     public async Task<User?> GetUserAsync(long id, CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetUserAsync(id, cancellationToken);
+        var res = await GetFromJsonAsync<UserModel>($"/user/{id}", cancellationToken);
         return res.CastModel<User>();
     }
+
+    #endregion
+
+    #region Private
+
+    private async IAsyncEnumerable<T> GetFromJsonYieldAsync<T>(string? requestUri, [EnumeratorCancellation] CancellationToken cancellationToken, [CallerMemberName] string memberName = "") where T : class
+    {
+        ArgumentRequestUriException.ThrowIfNullOrWhiteSpace(requestUri, nameof(requestUri));
+        WebServiceException.ThrowIfNullOrNotConnected(this);
+
+        while (requestUri != null)
+        {
+            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+            string str = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ErrorHandlingAsync(response, memberName, cancellationToken);
+            }
+
+            //var res = await ReadFromJsonAsync<List<T>?>(response, cancellationToken);
+
+            JsonTypeInfo<List<T>?> jsonTypeInfoOut = (JsonTypeInfo<List<T>?>)context.GetTypeInfo(typeof(List<T>))!;
+            var res = await response.Content.ReadFromJsonAsync<List<T>?>(jsonTypeInfoOut, cancellationToken);
+
+
+            if (res != null)
+            {
+                foreach (var item in res)
+                {
+                    yield return item;
+                }
+            }
+            requestUri = NextLink(response);
+        }
+    }
+
+    [GeneratedRegex(@"\<([^\<]*)\>;\srel=.next.", RegexOptions.Singleline)]
+    private static partial Regex LinkRegex();
+
+    private static string? NextLink(HttpResponseMessage response)
+    {
+        if (response.Headers.TryGetValues("link", out var header))
+        {
+            var links = header.First();
+            Match match = LinkRegex().Match(links);
+            if (match.Success)
+            {
+                string next = match.Groups[1].Value;
+                return next;
+            }
+        }
+        return null;
+    }
+
 
     #endregion
 
@@ -644,9 +806,22 @@ public sealed class Github : IDisposable
     /// <returns>A string containing the metadata information, or <c>null</c> if not available.</returns>
     public async Task<Meta?> GetMetaAsync(CancellationToken cancellationToken = default)
     {
-        WebServiceException.ThrowIfNullOrNotConnected(this.service);
+        WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await service.GetMetaAsync(cancellationToken);
+        var res = await GetFromJsonAsync<MetaModel>($"/meta", cancellationToken);
         return res.CastModel<Meta>();
+    }
+
+    /// <summary>
+    /// Retrieves the head revision (latest commit) branch for the specified repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>The <see cref="Branch"/> object representing the head revision, or <c>null</c> if not found.</returns>
+    public async Task<Branch?> GetHeadRevisionAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        var res = await GetFromJsonAsync<BranchModel>($"/repos/{owner}/{repo}/git/refs/heads", cancellationToken);
+        return res.CastModel<Branch>();
     }
 }
