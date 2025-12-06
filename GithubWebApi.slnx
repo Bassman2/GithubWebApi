@@ -2,16 +2,15 @@
   <Folder Name="/Demo/">
     <Project Path="Demo/GithubWebApiDemo90/GithubWebApiDemo90.csproj" />
   </Folder>
-  <Folder Name="/Doc/">
-    <Project Path="Doc/GithubWebApiDoc/GithubWebApiDoc.shfbproj" Type="7cf6df6d-3b04-46f8-a40b-537d21bca0b4" Id="32ea0204-0c46-4a96-a039-476f51a693bb" />
-  </Folder>
   <Folder Name="/Src/">
     <Project Path="../WebServiceClient/Src/WebServiceClientShare/WebServiceClientShare.shproj" />
+    <Project Path="Src/GithubWebApi100/GithubWebApi100.csproj" />
     <Project Path="Src/GithubWebApi80/GithubWebApi80.csproj" />
     <Project Path="Src/GithubWebApi90/GithubWebApi90.csproj" />
     <Project Path="Src/GithubWebApiShare/GithubWebApiShare.shproj" />
   </Folder>
   <Folder Name="/Test/">
+    <Project Path="Test/GithubWebApiUnitTest100/GithubWebApiUnitTest100.csproj" />
     <Project Path="Test/GithubWebApiUnitTest80/GithubWebApiUnitTest80.csproj" />
     <Project Path="Test/GithubWebApiUnitTest90/GithubWebApiUnitTest90.csproj" />
     <Project Path="Test/GithubWebApiUnitTestShare/GithubWebApiUnitTestShare.shproj" />
