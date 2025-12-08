@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Demo/">
+    <Project Path="Demo/GithubActionViewer/GithubActionViewer.csproj" />
     <Project Path="Demo/GithubWebApiDemo90/GithubWebApiDemo90.csproj" />
   </Folder>
   <Folder Name="/Src/">
