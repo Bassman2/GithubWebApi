@@ -140,20 +140,35 @@ public sealed class BusinessLogic : IBusinessLogic, IDisposable
 
         var workflows = await github.GetRepositoryWorkflowsAsync(repository.Owner!.Login!, repository.Name!);
 
-        foreach (var workflow in workflows ?? [])
+        var runs = await github.GetRepositoryWorkflowRunsAsync(repository.Owner!.Login!, repository.Name!, "master");
+
+        foreach (var run in runs ?? [])
+        //foreach (var workflow in workflows ?? [])
         {
 
-            ActionViewModel actionViewModel = new ActionViewModel
+                ActionViewModel actionViewModel = new ActionViewModel
             {
                 Server = serverName,
-                Owner = repository.Owner!.Name!,
+                Owner = repository.Owner!.Login!,
                 Repository = repository!.Name!,
-                Workflow = workflow.Name!,
-                State = workflow.State!
-                //ActionName = action.Name,
-                //Status = action.Status,
-                //LastUpdated = action.LastUpdated
-            };
+                //Workflow = workflow.Name!,
+                //State = workflow.State!
+
+                Workflow = run.Name!,
+                Branch = run.HeadBranch!,
+                Started = run.RunStartedAt,
+                State = run.Status!,
+                Conclusion = run.Conclusion!
+
+
+
+
+
+
+                    //ActionName = action.Name,
+                    //Status = action.Status,
+                    //LastUpdated = action.LastUpdated
+                };
             actionViewModels.Add(actionViewModel);
         }
     }

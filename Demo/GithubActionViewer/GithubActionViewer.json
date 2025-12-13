@@ -3,18 +3,18 @@
     {
       "name": "Github",
       "key": "github",
-      "users": [
-        {
-          "name": "Bassman2",
-          "key": "Bassman2"
-        }
-      ],
-      "organizations": [
-        {
-          "name": "notepad-plus-plus",
-          "key": "notepad-plus-plus"
-        }
-      ],
+      //"users": [
+      //  {
+      //    "name": "Bassman2",
+      //    "key": "Bassman2"
+      //  }
+      //],
+      //"organizations": [
+      //  {
+      //    "name": "notepad-plus-plus",
+      //    "key": "notepad-plus-plus"
+      //  }
+      //],
       "repositories": [
         {
           "name": "NPP_HexEdit",

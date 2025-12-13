@@ -752,10 +752,32 @@ public sealed partial class Github: JsonService
         WebServiceException.ThrowIfNotConnected(client);
 
         var res = await GetFromJsonAsync<WorkflowListModel>($"/repos/{owner}/{repo}/actions/workflows", cancellationToken);
-        return res.Workflows.CastModel<Workflow>();
+        return res?.Workflows.CastModel<Workflow>();
     }
 
     #endregion
+
+    #region Workflows Runs
+
+    public async Task<IEnumerable<WorkflowRun>?> GetRepositoryWorkflowRunsAsync(string owner, string repo, string? branch, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var url = CombineUrl($"/repos/{owner}/{repo}/actions/runs", ("branch", branch));
+        var res = await GetFromJsonAsync<WorkflowRunListModel>(url, cancellationToken);
+        return res?.WorkflowRuns.CastModel<WorkflowRun>();
+    }
+
+    public async Task<IEnumerable<WorkflowRun>?> GetWorkflowsRunsAsync(string owner, string repo, string workflowId, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var res = await GetFromJsonAsync<WorkflowRunListModel>($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", cancellationToken);
+        return res?.WorkflowRuns.CastModel<WorkflowRun>();
+    }          
+
+    #endregion
+
 
     #region Private
 

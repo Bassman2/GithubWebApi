@@ -6,5 +6,9 @@ public partial class ActionViewModel : ObservableObject
     public string Owner { get; set; } = null!;
     public string Repository { get; set; } = null!;
     public string Workflow { get; set; } = null!;
+    public string Branch { get; set; } = null!;
+    public DateTime? Started { get; set; }
     public string State { get; set; } = null!;
+
+    public string Conclusion { get; set; } = null!;
 }

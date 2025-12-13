@@ -34,6 +34,7 @@
 [JsonSerializable(typeof(MetaModel))]
 
 [JsonSerializable(typeof(WorkflowListModel))]
+[JsonSerializable(typeof(WorkflowRunListModel))]
 
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
