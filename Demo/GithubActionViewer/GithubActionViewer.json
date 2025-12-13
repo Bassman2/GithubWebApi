@@ -1,0 +1,38 @@
+{
+  "servers": [
+    {
+      "name": "Github",
+      "key": "github",
+      "users": [
+        {
+          "name": "Bassman2",
+          "key": "Bassman2"
+        }
+      ],
+      "organizations": [
+        {
+          "name": "notepad-plus-plus",
+          "key": "notepad-plus-plus"
+        }
+      ],
+      "repositories": [
+        {
+          "name": "NPP_HexEdit",
+          "key": "NPP_HexEdit",
+          "owner": "chcg"
+        }
+      ]
+    }
+    //{
+    //  "name": "GitExt Elektrobit Automotive",
+    //  "key": "gitext",
+    //  "organizations": [
+    //    {
+    //      "name": "Ralf Beckers",
+    //      "key": "bs"
+    //    }
+    //  ]
+    //}
+    
+  ]
+}

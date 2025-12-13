@@ -3,10 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:GithubActionViewer.View"
+        xmlns:vm="clr-namespace:GithubActionViewer.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         mc:Ignorable="d"
         Title="MainView" Height="450" Width="800">
     <Grid>
-        
+        <DataGrid 
+            ItemsSource="{Binding Actions}" 
+            AutoGenerateColumns="False"
+            HeadersVisibility="Column"
+            GridLinesVisibility="None"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserResizeColumns="False"
+            CanUserReorderColumns="True"
+            CanUserSortColumns="True"
+            IsSynchronizedWithCurrentItem="True"
+            ClipboardCopyMode="IncludeHeader"
+            Margin="10">
+            <b:Interaction.Behaviors>
+                <DataGridColumnVisibilityBehavior SettingsName="MembersColumnVisibility"/>
+            </b:Interaction.Behaviors>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Server" Binding="{Binding Server}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Owner" Binding="{Binding Owner}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Repository" Binding="{Binding Repository}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Workflow" Binding="{Binding Workflow}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="State" Binding="{Binding State}" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </AppWindowView>

@@ -1,4 +1,6 @@
-﻿using GithubActionViewer.View;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+
+using GithubActionViewer.View;
 using System.Configuration;
 using System.Data;
 using System.Windows;
@@ -13,33 +15,30 @@ public partial class App : Application
     private void OnStartup(object sender, StartupEventArgs e)
     {
         Trace.TraceInformation("Startup {0} {1}", DateTime.Now.ToLocalTime().ToShortTimeString(), DateTime.Now.ToLocalTime().ToShortDateString());
-
-        //string language = Settings.Default.Language;
-        //if (!string.IsNullOrEmpty(language))
-        //{
-        //    CultureInfo.CurrentUICulture = CultureInfo.CurrentCulture = new CultureInfo(language);
-        //}
-
-        //CultureInfo.CurrentUICulture = new CultureInfo("de-DE");
-        //CultureInfo.CurrentCulture = new CultureInfo("de-DE");
-        //CultureInfo.CurrentUICulture = new CultureInfo("en-US");    // for UI
-        //CultureInfo.CurrentCulture = new CultureInfo("en-US");      // for ToString("F2")
-        try
+               
+        AppDomain.CurrentDomain.UnhandledException += (s, a) =>
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(OnUnhandledException);
-            new MainView() { DataContext = new MainViewModel() }.Show();
-        }
-        catch (Exception ex)
-        {
+            Exception ex = (Exception)a.ExceptionObject;
             Trace.TraceError(ex.ToString());
-            MessageBox.Show(ex.ToString());
-        }
+            MessageBox.Show(ex.ToString(), "Unhandled Error !!!");
+        };
+
+        Ioc.Default.ConfigureServices
+        (
+            new ServiceCollection()
+                .AddSingleton<IBusinessLogic, BusinessLogic>()
+                .AddScoped<MainViewModel>()
+                .BuildServiceProvider()
+        );
+
+        new GithubActionViewer.View.MainView().Show();
+
     }
 
-    private void OnUnhandledException(object sender, UnhandledExceptionEventArgs args)
+    protected override void OnExit(ExitEventArgs e)
     {
-        Exception ex = (Exception)args.ExceptionObject;
-        Trace.TraceError(ex.ToString());
-        MessageBox.Show(ex.ToString(), "Unhandled Error");
+        Ioc.Default.GetRequiredService<IBusinessLogic>().Dispose();
+        base.OnExit(e);
     }
+        
 }

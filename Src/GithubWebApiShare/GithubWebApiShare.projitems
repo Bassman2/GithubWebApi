@@ -17,6 +17,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Github_old.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Meta.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\WorkflowListModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\WorkflowModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PullRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Reference.cs" />
@@ -59,5 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Model\UserModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)User.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Usings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Workflow.cs" />
   </ItemGroup>
 </Project>

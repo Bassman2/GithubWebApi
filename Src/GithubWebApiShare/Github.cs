@@ -33,7 +33,7 @@ public sealed partial class Github: JsonService
     /// <summary>
     /// Gets the relative URL used to test authentication with the GitHub API.
     /// </summary>
-    protected override string? AuthenticationTestUrl => "/user";
+    protected override string? AuthenticationTestUrl => "/";
 
     //protected override async Task ErrorHandlingAsync(HttpResponseMessage response, string memberName, CancellationToken cancellationToken)
     //{
@@ -741,6 +741,18 @@ public sealed partial class Github: JsonService
 
         var res = await GetFromJsonAsync<UserModel>($"/user/{id}", cancellationToken);
         return res.CastModel<User>();
+    }
+
+    #endregion
+
+    #region Workflows
+
+    public async Task<IEnumerable<Workflow>?> GetRepositoryWorkflowsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+
+        var res = await GetFromJsonAsync<WorkflowListModel>($"/repos/{owner}/{repo}/actions/workflows", cancellationToken);
+        return res.Workflows.CastModel<Workflow>();
     }
 
     #endregion

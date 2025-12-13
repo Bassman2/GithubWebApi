@@ -8,5 +8,9 @@ public partial class MainView : AppWindowView
     public MainView()
     {
         InitializeComponent();
+        if (!DesignerProperties.GetIsInDesignMode(this))
+        {
+            DataContext = Ioc.Default.GetRequiredService<MainViewModel>();
+        }
     }
 }
