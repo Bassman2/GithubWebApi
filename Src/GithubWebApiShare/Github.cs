@@ -1,4 +1,6 @@
-﻿namespace GithubWebApi;
+﻿using GithubWebApi.Model;
+
+namespace GithubWebApi;
 
 /// <summary>
 /// Provides methods to interact with GitHub's API, including operations for branches, pull requests, repositories, and more.
@@ -76,11 +78,19 @@ public sealed partial class Github: JsonService
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = GetFromJsonYieldAsync<BranchModel>($"/repos/{owner}/{repo}/branches", cancellationToken);
-        await foreach (var item in res)
+        await foreach (var res in GetFromJsonYieldAsync<List<BranchModel>>($"/repos/{owner}/{repo}/branches", cancellationToken))
         {
-            yield return new Branch(item);
+            foreach (var item in res)
+            {
+                yield return item.CastModel<Branch>()!;
+            }
         }
+
+        //var res = GetFromJsonYieldListAsync<BranchModel>($"/repos/{owner}/{repo}/branches", cancellationToken);
+        //await foreach (var item in res)
+        //{
+        //    yield return new Branch(item);
+        //}
     }
 
     /// <summary>
@@ -340,10 +350,9 @@ public sealed partial class Github: JsonService
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = GetFromJsonYieldAsync<RepositoryModel>($"/orgs/{org}/repos", cancellationToken);
-        if (res is not null)
+        await foreach (var res in GetFromJsonYieldAsync<List<RepositoryModel>>($"/orgs/{org}/repos", cancellationToken))
         {
-            await foreach (var item in res)
+            foreach (var item in res)
             {
                 yield return item.CastModel<Repository>()!;
             }
@@ -359,14 +368,22 @@ public sealed partial class Github: JsonService
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = GetFromJsonYieldAsync<RepositoryModel>($"/user/repos", cancellationToken);
-        if (res is not null)
+        await foreach (var res in GetFromJsonYieldAsync<List<RepositoryModel>>("/user/repos", cancellationToken))
         {
-            await foreach (var item in res)
+            foreach (var item in res)
             {
                 yield return item.CastModel<Repository>()!;
             }
         }
+
+        //var res = GetFromJsonYieldListAsync<RepositoryModel>($"/user/repos", cancellationToken);
+        //if (res is not null)
+        //{
+        //    await foreach (var item in res)
+        //    {
+        //        yield return item.CastModel<Repository>()!;
+        //    }
+        //}
     }
 
     /// <summary>
@@ -379,14 +396,22 @@ public sealed partial class Github: JsonService
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = GetFromJsonYieldAsync<RepositoryModel>($"/users/{user}/repos", cancellationToken);
-        if (res is not null)
+        await foreach (var res in GetFromJsonYieldAsync<List<RepositoryModel>>($"/users/{user}/repos", cancellationToken))
         {
-            await foreach (var item in res)
+            foreach (var item in res)
             {
                 yield return item.CastModel<Repository>()!;
             }
         }
+
+        //var res = GetFromJsonYieldListAsync<RepositoryModel>($"/users/{user}/repos", cancellationToken);
+        //if (res is not null)
+        //{
+        //    await foreach (var item in res)
+        //    {
+        //        yield return item.CastModel<Repository>()!;
+        //    }
+        //}
     }
 
     /// <summary>
@@ -399,14 +424,22 @@ public sealed partial class Github: JsonService
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = GetFromJsonYieldAsync<RepositoryModel>($"/repositories?since={since}", cancellationToken);
-        if (res is not null)
+        await foreach (var res in GetFromJsonYieldAsync<List<RepositoryModel>>($"/repositories?since={since}", cancellationToken))
         {
-            await foreach (var item in res)
+            foreach (var item in res)
             {
                 yield return item.CastModel<Repository>()!;
             }
         }
+
+        //var res = GetFromJsonYieldListAsync<RepositoryModel>($"/repositories?since={since}", cancellationToken);
+        //if (res is not null)
+        //{
+        //    await foreach (var item in res)
+        //    {
+        //        yield return item.CastModel<Repository>()!;
+        //    }
+        //}
     }
 
     /// <summary>
@@ -761,25 +794,12 @@ public sealed partial class Github: JsonService
         WebServiceException.ThrowIfNotConnected(client);
 
         var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows");
-        while (requestUri != null)
+        await foreach (var res in GetFromJsonYieldAsync<WorkflowListModel>(requestUri, cancellationToken))
         {
-            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
-            string str = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            foreach (var item in res.Workflows)
             {
-                await ErrorHandlingAsync(response, nameof(GetRepositoryWorkflowRunsAsync), cancellationToken);
+                yield return item.CastModel<Workflow>()!;
             }
-
-            JsonTypeInfo<WorkflowListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowListModel>)context.GetTypeInfo(typeof(WorkflowListModel))!;
-            var res = await response.Content.ReadFromJsonAsync<WorkflowListModel>(jsonTypeInfoOut, cancellationToken);
-            if (res != null)
-            {
-                foreach (var item in res.Workflows)
-                {
-                    yield return item.CastModel<Workflow>()!;
-                }
-            }
-            requestUri = NextLink(response);
         }
     }
 
@@ -802,25 +822,12 @@ public sealed partial class Github: JsonService
         WebServiceException.ThrowIfNotConnected(client);
 
         var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/runs", ("branch", branch));
-        while (requestUri != null)
+        await foreach (var res in GetFromJsonYieldAsync<WorkflowRunListModel>(requestUri, cancellationToken))
         {
-            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
-            string str = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (!response.IsSuccessStatusCode)
+            foreach (var item in res.WorkflowRuns)
             {
-                await ErrorHandlingAsync(response, nameof(GetRepositoryWorkflowRunsAsync), cancellationToken);
+                yield return item.CastModel<WorkflowRun>()!;
             }
-
-            JsonTypeInfo<WorkflowRunListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowRunListModel>)context.GetTypeInfo(typeof(WorkflowRunListModel))!;
-            var res = await response.Content.ReadFromJsonAsync<WorkflowRunListModel>(jsonTypeInfoOut, cancellationToken);
-            if (res != null)
-            {
-                foreach (var item in res.WorkflowRuns)
-                {
-                    yield return item.CastModel<WorkflowRun>()!;
-                }
-            }
-            requestUri = NextLink(response);
         }
     }
 
@@ -838,27 +845,14 @@ public sealed partial class Github: JsonService
     public async IAsyncEnumerable<WorkflowRun> GetWorkflowRunsAsync(string owner, string repo, int workflowId, string? branch = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
-                
-        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", ("branch", branch));
-        while (requestUri != null)
-        {
-            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
-            string str = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-                await ErrorHandlingAsync(response, nameof(GetWorkflowRunsAsync), cancellationToken);
-            }
 
-            JsonTypeInfo<WorkflowRunListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowRunListModel>)context.GetTypeInfo(typeof(WorkflowRunListModel))!;
-            var res = await response.Content.ReadFromJsonAsync<WorkflowRunListModel>(jsonTypeInfoOut, cancellationToken);
-            if (res != null)
+        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", ("branch", branch));
+        await foreach (var res in GetFromJsonYieldAsync<WorkflowRunListModel>(requestUri, cancellationToken))
+        {
+            foreach (var item in res.WorkflowRuns)
             {
-                foreach (var item in res.WorkflowRuns)
-                {
-                    yield return item.CastModel<WorkflowRun>()!;
-                }
+                yield return item.CastModel<WorkflowRun>()!;
             }
-            requestUri = NextLink(response);
         }
     }
 
@@ -896,28 +890,52 @@ public sealed partial class Github: JsonService
         while (requestUri != null)
         {
             using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+
+#if DEBUG
             string str = await response.Content.ReadAsStringAsync(cancellationToken);
-            if (!response.IsSuccessStatusCode)
-            {
-                await ErrorHandlingAsync(response, memberName, cancellationToken);
-            }
+#endif
 
-            //var res = await ReadFromJsonAsync<List<T>?>(response, cancellationToken);
+            await ErrorCheckAsync(response, memberName, cancellationToken);
 
-            JsonTypeInfo<List<T>?> jsonTypeInfoOut = (JsonTypeInfo<List<T>?>)context.GetTypeInfo(typeof(List<T>))!;
-            var res = await response.Content.ReadFromJsonAsync<List<T>?>(jsonTypeInfoOut, cancellationToken);
-
+            JsonTypeInfo<T> jsonTypeInfoOut = (JsonTypeInfo<T>)context.GetTypeInfo(typeof(T))!;
+            var res = await response.Content.ReadFromJsonAsync<T>(jsonTypeInfoOut, cancellationToken);
 
             if (res != null)
             {
-                foreach (var item in res)
-                {
-                    yield return item;
-                }
+                yield return res;
             }
             requestUri = NextLink(response);
         }
     }
+
+
+    //private async IAsyncEnumerable<T> GetFromJsonYieldListAsync<T>(string? requestUri, [EnumeratorCancellation] CancellationToken cancellationToken, [CallerMemberName] string memberName = "") where T : class
+    //{
+    //    ArgumentRequestUriException.ThrowIfNullOrWhiteSpace(requestUri, nameof(requestUri));
+    //    WebServiceException.ThrowIfNullOrNotConnected(this);
+
+    //    while (requestUri != null)
+    //    {
+    //        using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+    //        string str = await response.Content.ReadAsStringAsync(cancellationToken);
+    //        if (!response.IsSuccessStatusCode)
+    //        {
+    //            await ErrorHandlingAsync(response, memberName, cancellationToken);
+    //        }
+
+    //        JsonTypeInfo<List<T>?> jsonTypeInfoOut = (JsonTypeInfo<List<T>?>)context.GetTypeInfo(typeof(List<T>))!;
+    //        var res = await response.Content.ReadFromJsonAsync<List<T>?>(jsonTypeInfoOut, cancellationToken);
+
+    //        if (res != null)
+    //        {
+    //            foreach (var item in res)
+    //            {
+    //                yield return item;
+    //            }
+    //        }
+    //        requestUri = NextLink(response);
+    //    }
+    //}
 
     [GeneratedRegex(@"\<([^\<]*)\>;\srel=.next.", RegexOptions.Singleline)]
     private static partial Regex LinkRegex();
