@@ -747,14 +747,15 @@ public sealed partial class Github: JsonService
 
     #region Workflows
 
-    //public async Task<IEnumerable<Workflow>?> GetRepositoryWorkflowsAsync(string owner, string repo, CancellationToken cancellationToken = default)
-    //{
-    //    WebServiceException.ThrowIfNotConnected(client);
-
-    //    var res = await GetFromJsonAsync<WorkflowListModel>($"/repos/{owner}/{repo}/actions/workflows", cancellationToken);
-    //    return res?.Workflows.CastModel<Workflow>();
-    //}
-
+    /// <summary>
+    /// Retrieves all GitHub Actions workflows for a specified repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>
+    /// An asynchronous stream of <see cref="Workflow"/> objects representing each workflow in the specified repository.
+    /// </returns>
     public async IAsyncEnumerable<Workflow> GetRepositoryWorkflowsAsync(string owner, string repo, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
@@ -785,8 +786,17 @@ public sealed partial class Github: JsonService
     #endregion
 
     #region Workflows Runs
-       
 
+    /// <summary>
+    /// Retrieves all workflow runs for all GitHub Actions workflows in a repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="branch">The name of the branch to filter runs by (optional).</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>
+    /// An asynchronous stream of <see cref="WorkflowRun"/> objects representing each workflow run in the specified repository.
+    /// </returns>
     public async IAsyncEnumerable<WorkflowRun> GetRepositoryWorkflowRunsAsync(string owner, string repo, string? branch = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
@@ -814,6 +824,17 @@ public sealed partial class Github: JsonService
         }
     }
 
+    /// <summary>
+    /// Retrieves all runs for a specific GitHub Actions workflow in a repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="workflowId">The unique identifier of the workflow.</param>
+    /// <param name="branch">The name of the branch to filter runs by (optional).</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>
+    /// An asynchronous stream of <see cref="WorkflowRun"/> objects representing each run of the specified workflow.
+    /// </returns>
     public async IAsyncEnumerable<WorkflowRun> GetWorkflowRunsAsync(string owner, string repo, int workflowId, string? branch = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
@@ -841,6 +862,18 @@ public sealed partial class Github: JsonService
         }
     }
 
+    /// <summary>
+    /// Retrieves the most recent run of a specific GitHub Actions workflow for a repository.
+    /// </summary>
+    /// <param name="owner">The owner of the repository.</param>
+    /// <param name="repo">The name of the repository.</param>
+    /// <param name="workflowId">The unique identifier of the workflow.</param>
+    /// <param name="branch">The name of the branch to filter runs by (optional).</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>
+    /// The <see cref="WorkflowRun"/> object representing the latest workflow run,
+    /// or <c>null</c> if no runs are found.
+    /// </returns>
     public async Task<WorkflowRun?> GetWorkflowLastRunAsync(string owner, string repo, int workflowId, string? branch = null, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
