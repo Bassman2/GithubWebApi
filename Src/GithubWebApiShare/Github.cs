@@ -14,8 +14,8 @@ public sealed partial class Github: JsonService
     /// <param name="appName">The name of the application using the GitHub API.</param>
     public Github(string storeKey, string appName) : base(storeKey, appName, SourceGenerationContext.Default)
     {
-        client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+        //client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        //client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
         client!.DefaultRequestHeaders.Add("User-Agent", appName);
     }
 
@@ -27,15 +27,32 @@ public sealed partial class Github: JsonService
     /// <param name="appName">The name of the application using the GitHub API.</param>
     public Github(Uri host, IAuthenticator? authenticator, string appName) : base(host, authenticator, appName, SourceGenerationContext.Default)
     {
-        client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
+        //client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        //client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
         client!.DefaultRequestHeaders.Add("User-Agent", appName);
+    }
+
+    /// <summary>
+    /// Configures the <see cref="HttpClient"/> instance for JSON-based web jira requests.
+    /// </summary>
+    /// <param name="client">The <see cref="HttpClient"/> to be initialized or configured.</param>
+    /// <remarks>
+    /// Sets the default request headers to accept JSON and other common content types.
+    /// Override this method to apply additional client configuration before making requests.
+    /// </remarks>
+    protected override void InitializeClient(HttpClient client)
+    {
+        base.InitializeClient(client);
+        
+        client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+        //client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+        client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
     }
 
     /// <summary>
     /// Gets the relative URL used to test authentication with the GitHub API.
     /// </summary>
-    protected override string? AuthenticationTestUrl => "/";
+    protected override string? AuthenticationTestUrl => "/user";
 
     //protected override async Task ErrorHandlingAsync(HttpResponseMessage response, string memberName, CancellationToken cancellationToken)
     //{
