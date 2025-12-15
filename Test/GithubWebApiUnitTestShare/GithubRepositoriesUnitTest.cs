@@ -15,7 +15,7 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
         var list = await repos.ToListAsync();
         var repo = await repos.FirstOrDefaultAsync();
 
-        Assert.AreEqual(0, list.Count, nameof(list.Count));
+        Assert.IsEmpty(list, nameof(list.Count));
         Assert.IsNull(repo);
     }
 
@@ -35,9 +35,9 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
         Assert.AreEqual("MediaDevices", repo.Name, nameof(repo.Name));
         Assert.AreEqual("chcg/MediaDevices", repo.FullName, nameof(repo.FullName));
 
-        Assert.AreEqual(false, repo.Private, nameof(repo.Private));
+        Assert.IsFalse(repo.Private, nameof(repo.Private));
         Assert.AreEqual("MTP Library", repo.Description, nameof(repo.Description));
-        Assert.AreEqual(true, repo.Fork, nameof(repo.Fork));
+        Assert.IsTrue(repo.Fork, nameof(repo.Fork));
         Assert.AreEqual("https://api.github.com/repos/chcg/MediaDevices", repo.Url, nameof(repo.Url));
         Assert.AreEqual("https://api.github.com/repos/chcg/MediaDevices/{archive_format}{/ref}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
     }
@@ -55,9 +55,9 @@ public partial class GithubRepositoriesUnitTest : GithubBaseUnitTest
         Assert.AreEqual(testRepoFix, repo.Name, nameof(repo.Name));
         Assert.AreEqual($"{testUser}/{testRepoFix}", repo.FullName, nameof(repo.FullName));
 
-        Assert.AreEqual(false, repo.Private, nameof(repo.Private));
+        Assert.IsFalse(repo.Private, nameof(repo.Private));
         Assert.AreEqual("Test repository for fix tests", repo.Description, nameof(repo.Description));
-        Assert.AreEqual(false, repo.Fork, nameof(repo.Fork));
+        Assert.IsFalse(repo.Fork, nameof(repo.Fork));
         Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}", repo.Url, nameof(repo.Url));
         Assert.AreEqual($"{testHost.TrimEnd('/')}/repos/{testUser}/{testRepoFix}/{{archive_format}}{{/ref}}", repo.ArchiveUrl, nameof(repo.ArchiveUrl));
     }

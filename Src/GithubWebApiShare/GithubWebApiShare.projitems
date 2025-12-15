@@ -14,7 +14,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Content.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ContentCommit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Github.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Github_old.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Links.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Meta.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\WorkflowListModel.cs" />

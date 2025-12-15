@@ -13,7 +13,7 @@ public partial class GithubTreesUnitTest : GithubBaseUnitTest
         Assert.IsNotNull(root);
         Assert.IsNotNull(root.Trees);
         var list = root.Trees.ToList();
-        Assert.AreEqual(4, list.Count, nameof(list.Count));
+        Assert.HasCount(4, list, nameof(list.Count));
 
         var src = list.FirstOrDefault(t => t.Path == "Src");
         Assert.IsNotNull(src);
@@ -24,7 +24,7 @@ public partial class GithubTreesUnitTest : GithubBaseUnitTest
         Assert.IsNotNull(folder.Trees);
         var folders = folder.Trees.ToList();
 
-        Assert.AreEqual(3, folders.Count, nameof(folders.Count));
+        Assert.HasCount(3, folders, nameof(folders.Count));
     }
 
     [TestMethod]
@@ -37,6 +37,6 @@ public partial class GithubTreesUnitTest : GithubBaseUnitTest
         Assert.IsNotNull(root);
         Assert.IsNotNull(root.Trees);
         var list = root.Trees.ToList();
-        Assert.AreEqual(16, list.Count, nameof(list.Count));
+        Assert.HasCount(16, list, nameof(list.Count));
     }
 }
