@@ -10,4 +10,7 @@ public class RepositoryModel
 
     [JsonPropertyName("owner")]
     public string Owner { get; set; } = null!;
+
+    [JsonPropertyName("branches")]
+    public List<string>? Branches { get; set; }
 }

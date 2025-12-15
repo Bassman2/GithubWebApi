@@ -8,6 +8,7 @@ public partial class ActionViewModel : ObservableObject
     public string Workflow { get; set; } = null!;
     public string Branch { get; set; } = null!;
     public DateTime? Started { get; set; }
+    public int RunNumber { get; set; }
     public string State { get; set; } = null!;
 
     public string Conclusion { get; set; } = null!;

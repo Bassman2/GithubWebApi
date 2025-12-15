@@ -747,34 +747,108 @@ public sealed partial class Github: JsonService
 
     #region Workflows
 
-    public async Task<IEnumerable<Workflow>?> GetRepositoryWorkflowsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    //public async Task<IEnumerable<Workflow>?> GetRepositoryWorkflowsAsync(string owner, string repo, CancellationToken cancellationToken = default)
+    //{
+    //    WebServiceException.ThrowIfNotConnected(client);
+
+    //    var res = await GetFromJsonAsync<WorkflowListModel>($"/repos/{owner}/{repo}/actions/workflows", cancellationToken);
+    //    return res?.Workflows.CastModel<Workflow>();
+    //}
+
+    public async IAsyncEnumerable<Workflow> GetRepositoryWorkflowsAsync(string owner, string repo, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await GetFromJsonAsync<WorkflowListModel>($"/repos/{owner}/{repo}/actions/workflows", cancellationToken);
-        return res?.Workflows.CastModel<Workflow>();
+        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows");
+        while (requestUri != null)
+        {
+            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+            string str = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ErrorHandlingAsync(response, nameof(GetRepositoryWorkflowRunsAsync), cancellationToken);
+            }
+
+            JsonTypeInfo<WorkflowListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowListModel>)context.GetTypeInfo(typeof(WorkflowListModel))!;
+            var res = await response.Content.ReadFromJsonAsync<WorkflowListModel>(jsonTypeInfoOut, cancellationToken);
+            if (res != null)
+            {
+                foreach (var item in res.Workflows)
+                {
+                    yield return item.CastModel<Workflow>()!;
+                }
+            }
+            requestUri = NextLink(response);
+        }
     }
 
     #endregion
 
     #region Workflows Runs
+       
 
-    public async Task<IEnumerable<WorkflowRun>?> GetRepositoryWorkflowRunsAsync(string owner, string repo, string? branch, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<WorkflowRun> GetRepositoryWorkflowRunsAsync(string owner, string repo, string? branch = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var url = CombineUrl($"/repos/{owner}/{repo}/actions/runs", ("branch", branch));
-        var res = await GetFromJsonAsync<WorkflowRunListModel>(url, cancellationToken);
-        return res?.WorkflowRuns.CastModel<WorkflowRun>();
+        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/runs", ("branch", branch));
+        while (requestUri != null)
+        {
+            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+            string str = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ErrorHandlingAsync(response, nameof(GetRepositoryWorkflowRunsAsync), cancellationToken);
+            }
+
+            JsonTypeInfo<WorkflowRunListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowRunListModel>)context.GetTypeInfo(typeof(WorkflowRunListModel))!;
+            var res = await response.Content.ReadFromJsonAsync<WorkflowRunListModel>(jsonTypeInfoOut, cancellationToken);
+            if (res != null)
+            {
+                foreach (var item in res.WorkflowRuns)
+                {
+                    yield return item.CastModel<WorkflowRun>()!;
+                }
+            }
+            requestUri = NextLink(response);
+        }
     }
 
-    public async Task<IEnumerable<WorkflowRun>?> GetWorkflowsRunsAsync(string owner, string repo, string workflowId, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<WorkflowRun> GetWorkflowRunsAsync(string owner, string repo, int workflowId, string? branch = null, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        WebServiceException.ThrowIfNotConnected(client);
+                
+        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", ("branch", branch));
+        while (requestUri != null)
+        {
+            using HttpResponseMessage response = await client!.GetAsync(requestUri, cancellationToken);
+            string str = await response.Content.ReadAsStringAsync(cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                await ErrorHandlingAsync(response, nameof(GetWorkflowRunsAsync), cancellationToken);
+            }
+
+            JsonTypeInfo<WorkflowRunListModel> jsonTypeInfoOut = (JsonTypeInfo<WorkflowRunListModel>)context.GetTypeInfo(typeof(WorkflowRunListModel))!;
+            var res = await response.Content.ReadFromJsonAsync<WorkflowRunListModel>(jsonTypeInfoOut, cancellationToken);
+            if (res != null)
+            {
+                foreach (var item in res.WorkflowRuns)
+                {
+                    yield return item.CastModel<WorkflowRun>()!;
+                }
+            }
+            requestUri = NextLink(response);
+        }
+    }
+
+    public async Task<WorkflowRun?> GetWorkflowLastRunAsync(string owner, string repo, int workflowId, string? branch = null, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
 
-        var res = await GetFromJsonAsync<WorkflowRunListModel>($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", cancellationToken);
-        return res?.WorkflowRuns.CastModel<WorkflowRun>();
-    }          
+        var requestUri = CombineUrl($"/repos/{owner}/{repo}/actions/workflows/{workflowId}/runs", ("per_page", 1), ("branch", branch));
+        var res = await GetFromJsonAsync<WorkflowRunListModel>(requestUri, cancellationToken);
+        return res?.WorkflowRuns?.FirstOrDefault()?.CastModel<WorkflowRun>();
+    }
 
     #endregion
 

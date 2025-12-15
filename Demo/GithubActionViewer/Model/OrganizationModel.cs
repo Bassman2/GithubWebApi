@@ -7,4 +7,7 @@ public class OrganizationModel
 
     [JsonPropertyName("key")]
     public string Key { get; set; } = null!;
+
+    [JsonPropertyName("branches")]
+    public List<string>? Branches { get; set; }
 }

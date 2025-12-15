@@ -17,7 +17,7 @@
             GridLinesVisibility="None"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
-            CanUserResizeColumns="False"
+            CanUserResizeColumns="True"
             CanUserReorderColumns="True"
             CanUserSortColumns="True"
             IsSynchronizedWithCurrentItem="True"
@@ -33,6 +33,7 @@
                 <DataGridTextColumn Header="Workflow" Binding="{Binding Workflow}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Branch" Binding="{Binding Branch}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Started" Binding="{Binding Started, StringFormat=yyyy-MM-dd}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Run Number" Binding="{Binding RunNumber}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="State" Binding="{Binding State}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Conclusion" Binding="{Binding Conclusion}" IsReadOnly="True"/>
             </DataGrid.Columns>

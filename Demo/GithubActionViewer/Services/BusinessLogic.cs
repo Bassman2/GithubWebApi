@@ -24,16 +24,15 @@ public sealed class BusinessLogic : IBusinessLogic, IDisposable
     {
         Task.Run(async () =>
         {
-            await UpdateAsync();
+            await UpdateServersAsync();
         }).Wait();
     }
 
     private List<ActionViewModel> actionViewModels = [];    
 
-    private async Task UpdateAsync()
+    private async Task UpdateServersAsync()
     {
         actionViewModels.Clear();
-        //List<ActionViewModel> actionViewModels = [];
         foreach (var server in mainModel.Servers)
         {
             Debug.WriteLine($"Server: {server.Name}");
@@ -44,31 +43,9 @@ public sealed class BusinessLogic : IBusinessLogic, IDisposable
             {
                 Debug.WriteLine($"User: {user.Name} [{user.Key}]");
 
-                IAsyncEnumerable<Repository> repositories = github.GetUserRepositoriesAsync(user.Key);
-                //List<Repository> repositories = repos.ToBlockingEnumerable<Repository>().ToList();
-                //List<Repository> repositories = (List<Repository>)github.GetOrganizationRepositoriesAsync(organization.Key);
-
-                await foreach (var repository in repositories)
+                await foreach (var repository in github.GetUserRepositoriesAsync(user.Key))
                 {
-
-                    Debug.WriteLine($"Repository: {repository.Name}");
-
-                    await UpdateRepositoryAsync(github, repository, server.Name);
-
-                    //List<string> actions = ["Action"];
-                    //foreach (var action in actions)
-                    //{
-                    //    ActionViewModel actionViewModel = new ActionViewModel
-                    //    {
-                    //        ServerName = server.Name,
-                    //        OrganizationName = user.Name,
-                    //        RepositoryName = repository.Name!,
-                    //        //ActionName = action.Name,
-                    //        //Status = action.Status,
-                    //        //LastUpdated = action.LastUpdated
-                    //    };
-                    //    actionViewModels.Add(actionViewModel);
-                    //}
+                    await UpdateRepositoryAsync(github, repository, server.Name, user.Branches);
                 }
             }
 
@@ -76,31 +53,9 @@ public sealed class BusinessLogic : IBusinessLogic, IDisposable
             {
                 Debug.WriteLine($"Organization: {organization.Name} [{organization.Key}]");
 
-                IAsyncEnumerable<Repository> repositories = github.GetOrganizationRepositoriesAsync(organization.Key);
-                //List<Repository> repositories = repos.ToBlockingEnumerable<Repository>().ToList();
-                //List<Repository> repositories = (List<Repository>)github.GetOrganizationRepositoriesAsync(organization.Key);
-
-                await foreach (var repository in repositories)
+                await foreach (var repository in github.GetOrganizationRepositoriesAsync(organization.Key))
                 {
-
-                    Debug.WriteLine($"Repository: {repository.Name}");
-
-                    await UpdateRepositoryAsync(github, repository, server.Name);
-
-                    //List<string> actions = ["Action"];
-                    //foreach (var action in actions)
-                    //{
-                    //    ActionViewModel actionViewModel = new ActionViewModel
-                    //    {
-                    //        ServerName = server.Name,
-                    //        OrganizationName = organization.Name,
-                    //        RepositoryName = repository.Name!,
-                    //        //ActionName = action.Name,
-                    //        //Status = action.Status,
-                    //        //LastUpdated = action.LastUpdated
-                    //    };
-                    //    actionViewModels.Add(actionViewModel);
-                    //}
+                    await UpdateRepositoryAsync(github, repository, server.Name, organization.Branches);
                 }
             }
 
@@ -109,71 +64,104 @@ public sealed class BusinessLogic : IBusinessLogic, IDisposable
                 Debug.WriteLine($"Repository: {repo.Name} [{repo.Key}] [{repo.Owner}]");
 
                 Repository? repository = await github.GetRepositoryAsync(repo.Owner, repo.Key);
-
-                if (repository != null)
-                { 
-                    await UpdateRepositoryAsync(github, repository, server.Name);
+                if (repository is not null)
+                {
+                    await UpdateRepositoryAsync(github, repository, server.Name, repo.Branches);
                 }
-
-                //List<string> actions = ["Action"];
-                //foreach (var action in actions)
-                //{
-                //    ActionViewModel actionViewModel = new ActionViewModel
-                //    {
-                //        ServerName = server.Name,
-                //        OrganizationName = repo.Owner,
-                //        RepositoryName = repository!.Name!,
-                //        //ActionName = action.Name,
-                //        //Status = action.Status,
-                //        //LastUpdated = action.LastUpdated
-                //    };
-                //    actionViewModels.Add(actionViewModel);
-                //}
             }
            
         }
     }
 
-    private async Task UpdateRepositoryAsync(Github github, Repository repository, string serverName)
+    
+
+    private async Task UpdateRepositoryAsync(Github github, Repository repository, string serverName, List<string>? branches)
+    {
+        if (branches == null)
+        {
+            await UpdateWorkflow3Async(github, repository, serverName, null);
+        }
+        else
+        {
+            foreach (var branch in branches)
+            {
+                await UpdateWorkflow3Async(github, repository, serverName, branch);
+            }
+        }
+    }
+
+    private async Task UpdateWorkflowAsync(Github github, Repository repository, string serverName, string? branch)
     {
         Debug.WriteLine($"    Repository: {repository.Owner!.Name!} {repository.Name!}");
 
-        var workflows = await github.GetRepositoryWorkflowsAsync(repository.Owner!.Login!, repository.Name!);
+        //var workflows = await github.GetRepositoryWorkflowsAsync(repository.Owner!.Login!, repository.Name!);
+               
 
-        var runs = await github.GetRepositoryWorkflowRunsAsync(repository.Owner!.Login!, repository.Name!, "master");
-
-        foreach (var run in runs ?? [])
-        //foreach (var workflow in workflows ?? [])
+        await foreach (var run in github.GetRepositoryWorkflowRunsAsync(repository.Owner!.Login!, repository.Name!, branch))
         {
-
-                ActionViewModel actionViewModel = new ActionViewModel
+            actionViewModels.Add(new ActionViewModel
             {
                 Server = serverName,
                 Owner = repository.Owner!.Login!,
                 Repository = repository!.Name!,
-                //Workflow = workflow.Name!,
-                //State = workflow.State!
-
                 Workflow = run.Name!,
                 Branch = run.HeadBranch!,
                 Started = run.RunStartedAt,
+                RunNumber = run.RunNumber,
                 State = run.Status!,
                 Conclusion = run.Conclusion!
-
-
-
-
-
-
-                    //ActionName = action.Name,
-                    //Status = action.Status,
-                    //LastUpdated = action.LastUpdated
-                };
-            actionViewModels.Add(actionViewModel);
+            });
         }
     }
 
+    private async Task UpdateWorkflow2Async(Github github, Repository repository, string serverName, string? branch)
+    {
+        Debug.WriteLine($"    Repository: {repository.Owner!.Name!} {repository.Name!}");
 
+        await foreach (var workflow in github.GetRepositoryWorkflowsAsync(repository.Owner!.Login!, repository.Name!))
+        {
+            await foreach (var run in github.GetWorkflowRunsAsync(repository.Owner!.Login!, repository.Name!, workflow.Id, branch))
+            {
+                actionViewModels.Add(new ActionViewModel
+                {
+                    Server = serverName,
+                    Owner = repository.Owner!.Login!,
+                    Repository = repository!.Name!,
+                    Workflow = run.Name!,
+                    Branch = run.HeadBranch!,
+                    Started = run.RunStartedAt,
+                    RunNumber = run.RunNumber,
+                    State = run.Status!,
+                    Conclusion = run.Conclusion!
+                });
+            }
+        }
+    }
+
+    private async Task UpdateWorkflow3Async(Github github, Repository repository, string serverName, string? branch)
+    {
+        Debug.WriteLine($"    Repository: {repository.Owner!.Name!} {repository.Name!}");
+
+        await foreach (var workflow in github.GetRepositoryWorkflowsAsync(repository.Owner!.Login!, repository.Name!))
+        {
+            var run = await github.GetWorkflowLastRunAsync(repository.Owner!.Login!, repository.Name!, workflow.Id, branch);
+            if (run is not null)
+            {
+                actionViewModels.Add(new ActionViewModel
+                {
+                    Server = serverName,
+                    Owner = repository.Owner!.Login!,
+                    Repository = repository!.Name!,
+                    Workflow = run.Name!,
+                    Branch = run.HeadBranch!,
+                    Started = run.RunStartedAt,
+                    RunNumber = run.RunNumber,
+                    State = run.Status!,
+                    Conclusion = run.Conclusion!
+                });
+            }
+        }
+    }
 
     public List<ActionViewModel> GetActions()
     {        
