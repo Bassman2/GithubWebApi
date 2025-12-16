@@ -25,7 +25,7 @@ public sealed partial class Github: JsonService
     { }
 
     /// <summary>
-    /// Configures the provided <see cref="HttpClient"/> instance with GitHub-specific default headers required for API requests.
+    /// Configures the provided <see cref="HttpClient"/> instance with specific default headers required for API requests.
     /// This includes setting the User-Agent, Accept, and API version headers.
     /// </summary>
     /// <param name="client">The <see cref="HttpClient"/> to configure for GitHub API usage.</param>
