@@ -13,11 +13,7 @@ public sealed partial class Github: JsonService
     /// <param name="storeKey">The key used to store authentication or configuration data.</param>
     /// <param name="appName">The name of the application using the GitHub API.</param>
     public Github(string storeKey, string appName) : base(storeKey, appName, SourceGenerationContext.Default)
-    {
-        //client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        //client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-        client!.DefaultRequestHeaders.Add("User-Agent", appName);
-    }
+    { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Github"/> class using a host URI, an optional authenticator, and an application name.
@@ -26,27 +22,21 @@ public sealed partial class Github: JsonService
     /// <param name="authenticator">The authenticator used for API authentication, or <c>null</c> for unauthenticated access.</param>
     /// <param name="appName">The name of the application using the GitHub API.</param>
     public Github(Uri host, IAuthenticator? authenticator, string appName) : base(host, authenticator, appName, SourceGenerationContext.Default)
-    {
-        //client!.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-        //client!.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
-        client!.DefaultRequestHeaders.Add("User-Agent", appName);
-    }
+    { }
 
     /// <summary>
-    /// Configures the <see cref="HttpClient"/> instance for JSON-based web jira requests.
+    /// Configures the provided <see cref="HttpClient"/> instance with GitHub-specific default headers required for API requests.
+    /// This includes setting the User-Agent, Accept, and API version headers.
     /// </summary>
-    /// <param name="client">The <see cref="HttpClient"/> to be initialized or configured.</param>
-    /// <remarks>
-    /// Sets the default request headers to accept JSON and other common content types.
-    /// Override this method to apply additional client configuration before making requests.
-    /// </remarks>
-    protected override void InitializeClient(HttpClient client)
+    /// <param name="client">The <see cref="HttpClient"/> to configure for GitHub API usage.</param>
+    /// <param name="appName">The name of the application, used as the User-Agent header value.</param>
+    protected override void InitializeClient(HttpClient client, string appName)
     {
-        base.InitializeClient(client);
-        
+
+        client.DefaultRequestHeaders.Add("User-Agent", appName);
+        client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
         client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
         //client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
-        client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", "2022-11-28");
     }
 
     /// <summary>
