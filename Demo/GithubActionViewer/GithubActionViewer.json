@@ -8,8 +8,7 @@
           "name": "Bassman2",
           "key": "Bassman2",
           "branches": [
-            "main",
-            "master"
+            "main"
           ]
         }
       ]

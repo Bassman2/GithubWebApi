@@ -31,6 +31,7 @@
                 <DataGridTextColumn Header="Owner" Binding="{Binding Owner}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Repository" Binding="{Binding Repository}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Workflow" Binding="{Binding Workflow}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Run" Binding="{Binding Run}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Branch" Binding="{Binding Branch}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Started" Binding="{Binding Started, StringFormat=yyyy-MM-dd}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Run Number" Binding="{Binding RunNumber}" IsReadOnly="True"/>
