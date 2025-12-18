@@ -2,7 +2,11 @@
 
 public interface IBusinessLogic : IDisposable
 {
-    void Update();
+    ObservableCollection<ActionViewModel> Actions { get; }
 
-    List<ActionViewModel> GetActions();
+    Task InitAsync();
+
+    Task UpdateAsync();
+
+    
 }

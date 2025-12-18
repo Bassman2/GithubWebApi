@@ -875,7 +875,7 @@ public sealed partial class Github: JsonService
     /// The <see cref="WorkflowRun"/> object representing the latest workflow run,
     /// or <c>null</c> if no runs are found.
     /// </returns>
-    public async Task<WorkflowRun?> GetWorkflowLastRunAsync(string owner, string repo, int workflowId, string? branch = null, CancellationToken cancellationToken = default)
+    public async Task<WorkflowRun?> GetWorkflowLastRunAsync(string owner, string repo, long workflowId, string? branch = null, CancellationToken cancellationToken = default)
     {
         WebServiceException.ThrowIfNotConnected(client);
 

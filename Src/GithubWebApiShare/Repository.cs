@@ -28,7 +28,7 @@ public class Repository
     /// <summary>
     /// Gets the unique identifier of the repository.
     /// </summary>
-    public long? Id { get; internal init; }
+    public long Id { get; internal init; }
 
     /// <summary>
     /// Gets the Node ID of the repository.

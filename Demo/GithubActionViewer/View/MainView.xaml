@@ -9,7 +9,57 @@
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         mc:Ignorable="d"
         Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <Image x:Key="closeImage" Width="16" Height="16" Source="/Images/Close16.png" x:Shared="false"/>
+        <Image x:Key="scanImage" Width="16" Height="16" Source="/Images/Scan16.png" x:Shared="false"/>
+        <Image x:Key="helpImage" Width="16" Height="16" Source="/Images/Help16.png" x:Shared="false"/>
+        <Image x:Key="infoImage" Width="16" Height="16" Source="/Images/Info16.png" x:Shared="false"/>
+        <BoolToVisibilityCollapsedConverter x:Key="BoolToVisibilityCollabsedConverter"/>
+    </Window.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <!--<MenuItem Header="Edit" Icon="{StaticResource editImage}" Command="{Binding EditCommand}" />-->
+                <Separator/>
+                <MenuItem Header="_Exit" Icon="{StaticResource closeImage}" Command="{Binding ExitCommand}" />
+            </MenuItem>
+        </Menu>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Command="{Binding UpdateCommand}" Content="{StaticResource scanImage}" ToolTip="Update Runs"/>                
+            </ToolBar>
+            <!--
+            <ToolBar ItemsSource="{Binding Documentations}">
+                <ToolBar.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Icon}" ToolTip="{Binding Name}" Command="{Binding OpenCommand}" BorderBrush="{x:Null}" Background="{x:Null}" BorderThickness="0" Width="20" Height="20" />
+                    </DataTemplate>
+                </ToolBar.ItemTemplate>
+            </ToolBar>-->
+            <ToolBar>
+                <Button Command="{Binding AboutCommand}" Content="{StaticResource infoImage}" ToolTip="About"/>
+            </ToolBar>
+        </ToolBarTray>
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="10" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <TextBlock Text="{Binding StatusText}"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <!--  -->
+                <ProgressBar Grid.Row="0" Grid.Column="1" Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityCollabsedConverter}}" IsIndeterminate="true" Width="200" Height="16" Margin="3" />
+            </StatusBarItem>
+        </StatusBar>
         <DataGrid 
             ItemsSource="{Binding Actions}" 
             AutoGenerateColumns="False"
@@ -27,10 +77,10 @@
                 <DataGridColumnVisibilityBehavior SettingsName="MembersColumnVisibility"/>
             </b:Interaction.Behaviors>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Server" Binding="{Binding Server}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Server" Binding="{Binding ServerName}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Owner" Binding="{Binding Owner}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Repository" Binding="{Binding Repository}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Workflow" Binding="{Binding Workflow}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Repository" Binding="{Binding RepositoryName}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Workflow" Binding="{Binding WorkflowName}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Run" Binding="{Binding Run}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Branch" Binding="{Binding Branch}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Started" Binding="{Binding Started, StringFormat=yyyy-MM-dd}" IsReadOnly="True"/>
@@ -39,5 +89,5 @@
                 <DataGridTextColumn Header="Conclusion" Binding="{Binding Conclusion}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
-    </Grid>
+    </DockPanel>
 </AppWindowView>

@@ -1,45 +1,51 @@
 {
   "servers": [
+
+
+
+    //  {
+    //    "name": "Github",
+    //    "key": "github",
+    //    "users": [
+    //      {
+    //        "name": "Bassman2",
+    //        "key": "Bassman2",
+    //        "branches": [
+    //          "main"
+    //        ]
+    //      }
+    //    ]
+    //    //"organizations": [
+    //    //  {
+    //    //    "name": "notepad-plus-plus",
+    //    //    "key": "notepad-plus-plus"
+    //    //  }
+    //    //],
+    //    //"repositories": [
+    //    //  {
+    //    //    "name": "NPP_HexEdit",
+    //    //    "key": "NPP_HexEdit",
+    //    //    "owner": "chcg"
+    //    //  }
+    //    //]
+    //  }
+    
+    
     {
-      "name": "Github",
-      "key": "github",
-      "users": [
+      "name": "GitExt Elektrobit Automotive",
+      "key": "gitext",
+      "organizations": [
         {
-          "name": "Bassman2",
-          "key": "Bassman2",
+          "name": "EB-GUIDE-Speech",
+          "key": "EB-GUIDE-Speech",
           "branches": [
-            "main"
+            "main",
+            "master"
           ]
         }
       ]
-      //"organizations": [
-      //  {
-      //    "name": "notepad-plus-plus",
-      //    "key": "notepad-plus-plus"
-      //  }
-      //],
-      //"repositories": [
-      //  {
-      //    "name": "NPP_HexEdit",
-      //    "key": "NPP_HexEdit",
-      //    "owner": "chcg"
-      //  }
-      //]
     }
-    //{
-    //  "name": "GitExt Elektrobit Automotive",
-    //  "key": "gitext",
-    //  "organizations": [
-    //    {
-    //      "name": "EB-GUIDE-Speech",
-    //      "key": "EB-GUIDE-Speech",
-    //      "branches": [
-    //        "main",
-    //        "master"
-    //      ]
-    //    }
-    //  ]
-    //}
-    
+
+
   ]
 }

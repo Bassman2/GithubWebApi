@@ -26,7 +26,7 @@ public class Workflow
     /// <summary>
     /// Gets the unique identifier of the workflow.
     /// </summary>
-    public int Id { get; }
+    public long Id { get; }
 
     /// <summary>
     /// Gets the node ID of the workflow (GraphQL global node ID).
