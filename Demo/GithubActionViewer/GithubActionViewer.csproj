@@ -9,6 +9,12 @@
     <AssemblyName>GithubActionViewer</AssemblyName>
     <RootNamespace>GithubActionViewer</RootNamespace>
     <StartupObject>GithubActionViewer.App</StartupObject>
+    <Title>Github Action Viewer</Title>
+    <Authors>Ralf Beckers</Authors>
+    <Company>Ralf Beckers</Company>
+    <Product>Github Action Viewer</Product>
+    <Description>Shows all github action stati.</Description>
+    <Copyright>Copyright 2025 by</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
